@@ -3229,6 +3229,105 @@
         userActivityList: document.getElementById('user-activity-list')
     };
 
+    // دالة اختيار الصف الدراسي (تم تعديلها)
+    function selectYear(year) {
+        try {
+            selectedYear = year;
+            // مسح جميع المتغيرات السابقة لمنع التداخل
+            selectedSection = '';
+            selectedSubject = '';
+            selectedLesson = '';
+            selectedSublesson = '';
+            
+            // مسح الحالة المحفوظة في localStorage لمنع التداخل
+            localStorage.removeItem('quizState');
+            
+            elements.yearSelectionContainer.style.display = 'none';
+            elements.sectionSelectionContainer.style.display = 'block';
+            elements.headerBackBtn.style.display = 'flex';
+            
+            const yearText = getYearText(selectedYear);
+            elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText}`;
+            
+            loadSectionsForYear(selectedYear);
+            saveCurrentState();
+        } catch (error) {
+            console.error('خطأ في اختيار الصف الدراسي:', error);
+            showError('حدث خطأ في اختيار الصف الدراسي');
+        }
+    }
+
+    // دالة الرجوع الموحدة (تم تعديلها)
+    function goBack() {
+        try {
+            if (elements.quizContainer.style.display === 'block') {
+                // إخفاء الاختبار وإظهار المستوى السابق
+                elements.quizContainer.style.display = 'none';
+                if (selectedSublesson) {
+                    elements.sublessonSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedSublesson = ''; // مسح القسم الفرعي
+                } else if (selectedLesson) {
+                    elements.sublessonSelectionContainer.style.display = 'none';
+                    elements.lessonSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedLesson = ''; // مسح الدرس
+                    selectedSublesson = '';
+                } else if (selectedSubject) {
+                    elements.lessonSelectionContainer.style.display = 'none';
+                    elements.subjectSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedSubject = ''; // مسح المادة
+                    selectedLesson = '';
+                    selectedSublesson = '';
+                } else if (selectedSection) {
+                    elements.subjectSelectionContainer.style.display = 'none';
+                    elements.sectionSelectionContainer.style.display = 'block';
+                    elements.headerBackBtn.style.display = 'flex';
+                    selectedSection = ''; // مسح القسم
+                    selectedSubject = '';
+                    selectedLesson = '';
+                    selectedSublesson = '';
+                } else {
+                    elements.sectionSelectionContainer.style.display = 'none';
+                    elements.yearSelectionContainer.style.display = 'grid';
+                    elements.headerBackBtn.style.display = 'none';
+                    selectedYear = ''; // مسح السنة
+                    selectedSection = '';
+                    selectedSubject = '';
+                    selectedLesson = '';
+                    selectedSublesson = '';
+                }
+            } else if (elements.sublessonSelectionContainer.style.display === 'block') {
+                elements.sublessonSelectionContainer.style.display = 'none';
+                elements.lessonSelectionContainer.style.display = 'block';
+                elements.headerBackBtn.style.display = 'flex';
+                selectedSublesson = '';
+            } else if (elements.lessonSelectionContainer.style.display === 'block') {
+                elements.lessonSelectionContainer.style.display = 'none';
+                elements.subjectSelectionContainer.style.display = 'block';
+                elements.headerBackBtn.style.display = 'flex';
+                selectedLesson = '';
+            } else if (elements.subjectSelectionContainer.style.display === 'block') {
+                elements.subjectSelectionContainer.style.display = 'none';
+                elements.sectionSelectionContainer.style.display = 'block';
+                elements.headerBackBtn.style.display = 'flex';
+                selectedSubject = '';
+            } else if (elements.sectionSelectionContainer.style.display === 'block') {
+                elements.sectionSelectionContainer.style.display = 'none';
+                elements.yearSelectionContainer.style.display = 'grid';
+                elements.headerBackBtn.style.display = 'none';
+                selectedSection = '';
+            }
+            
+            // حفظ الحالة بعد التغيير
+            saveCurrentState();
+        } catch (error) {
+            console.error('خطأ في دالة الرجوع:', error);
+            showError('حدث خطأ في عملية الرجوع');
+        }
+    }
+
     // تهيئة التطبيق
     function initApp() {
         try {
@@ -3256,6 +3355,16 @@
             
             // إضافة مستمع لزر الرجوع في المتصفح
             window.addEventListener('popstate', handleBrowserBack);
+            
+            // إضافة مستمعي الأحداث لبطاقات الصفوف (باستخدام selectYear المعدلة)
+            document.querySelectorAll('.year-card').forEach(card => {
+                card.removeEventListener('click', card._listener);
+                const listener = function() {
+                    selectYear(this.dataset.year);
+                };
+                card.addEventListener('click', listener);
+                card._listener = listener;
+            });
             
             console.log('التطبيق تم تهيئته بنجاح');
         } catch (error) {
@@ -3389,66 +3498,6 @@
             goBack();
         } catch (error) {
             console.error('خطأ في التعامل مع زر الرجوع في المتصفح:', error);
-        }
-    }
-    
-    // دالة الرجوع الموحدة
-    function goBack() {
-        try {
-            if (elements.quizContainer.style.display === 'block') {
-                elements.quizContainer.style.display = 'none';
-                if (selectedSublesson) {
-                    elements.sublessonSelectionContainer.style.display = 'block';
-                    elements.headerBackBtn.style.display = 'flex';
-                } else if (selectedLesson) {
-                    elements.sublessonSelectionContainer.style.display = 'none';
-                    elements.lessonSelectionContainer.style.display = 'block';
-                    elements.headerBackBtn.style.display = 'flex';
-                    selectedSublesson = '';
-                } else if (selectedSubject) {
-                    elements.lessonSelectionContainer.style.display = 'none';
-                    elements.subjectSelectionContainer.style.display = 'block';
-                    elements.headerBackBtn.style.display = 'flex';
-                    selectedLesson = '';
-                } else if (selectedSection) {
-                    elements.subjectSelectionContainer.style.display = 'none';
-                    elements.sectionSelectionContainer.style.display = 'block';
-                    elements.headerBackBtn.style.display = 'flex';
-                    selectedSubject = '';
-                } else {
-                    elements.sectionSelectionContainer.style.display = 'none';
-                    elements.yearSelectionContainer.style.display = 'grid';
-                    elements.backBtn.style.display = 'none';
-                    elements.headerBackBtn.style.display = 'none';
-                    selectedSection = '';
-                }
-            } else if (elements.sublessonSelectionContainer.style.display === 'block') {
-                elements.sublessonSelectionContainer.style.display = 'none';
-                elements.lessonSelectionContainer.style.display = 'block';
-                elements.headerBackBtn.style.display = 'flex';
-                selectedSublesson = '';
-            } else if (elements.lessonSelectionContainer.style.display === 'block') {
-                elements.lessonSelectionContainer.style.display = 'none';
-                elements.subjectSelectionContainer.style.display = 'block';
-                elements.headerBackBtn.style.display = 'flex';
-                selectedLesson = '';
-            } else if (elements.subjectSelectionContainer.style.display === 'block') {
-                elements.subjectSelectionContainer.style.display = 'none';
-                elements.sectionSelectionContainer.style.display = 'block';
-                elements.headerBackBtn.style.display = 'flex';
-                selectedSubject = '';
-            } else if (elements.sectionSelectionContainer.style.display === 'block') {
-                elements.sectionSelectionContainer.style.display = 'none';
-                elements.yearSelectionContainer.style.display = 'grid';
-                elements.backBtn.style.display = 'none';
-                elements.headerBackBtn.style.display = 'none';
-                selectedSection = '';
-            }
-            
-            saveCurrentState();
-        } catch (error) {
-            console.error('خطأ في دالة الرجوع:', error);
-            showError('حدث خطأ في عملية الرجوع');
         }
     }
     
@@ -3766,28 +3815,6 @@
     // إعداد مستمعي الأحداث
     function setupEventListeners() {
         try {
-            // اختيار الصف الدراسي
-            elements.yearCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    try {
-                        selectedYear = this.dataset.year;
-                        elements.yearSelectionContainer.style.display = 'none';
-                        elements.sectionSelectionContainer.style.display = 'block';
-                        elements.backBtn.style.display = 'flex';
-                        elements.headerBackBtn.style.display = 'flex';
-                        
-                        const yearText = getYearText(selectedYear);
-                        elements.quizTitle.textContent = `اختبار إختبارات سلاح الأزهري - ${yearText}`;
-                        
-                        loadSectionsForYear(selectedYear);
-                        saveCurrentState();
-                    } catch (error) {
-                        console.error('خطأ في اختيار الصف الدراسي:', error);
-                        showError('حدث خطأ في اختيار الصف الدراسي');
-                    }
-                });
-            });
-            
             // زر Dark Mode
             if (elements.themeToggle) {
                 elements.themeToggle.addEventListener('click', toggleDarkMode);
@@ -4478,7 +4505,6 @@
                 console.error('خطأ في تحديث إحصائيات النتائج:', error);
             });
         } catch (error) {
-            console.error('خطأ في دالة تحديث الإحصائي');
             console.error('خطأ في دالة تحديث الإحصائي:', error);
         }
     }
@@ -6921,12 +6947,12 @@
         }
     }
     
-    // استعادة بيانات النسخة الاحتياطية - 🔥 تصحيح كامل
+    // استعادة بيانات النسخة الاحتياطية
     function restoreBackupData(backupData) {
         try {
             console.log('بدء استعادة النسخة الاحتياطية...');
             
-            // 🔥 تصحيح: إنشاء وعود لجميع عمليات الحذف أولاً
+            // إنشاء وعود لجميع عمليات الحذف أولاً
             const deletePromises = [];
             
             // حذف جميع البيانات القديمة أولاً
@@ -6950,7 +6976,7 @@
                     backupData.sections.forEach(section => {
                         const sectionId = section.id;
                         const sectionData = { ...section };
-                        delete sectionData.id; // إزالة المعرف القديم
+                        delete sectionData.id;
                         
                         restorePromises.push(
                             database.ref('sections/' + sectionId).set(sectionData)
