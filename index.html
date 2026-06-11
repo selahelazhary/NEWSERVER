@@ -415,6 +415,10 @@
             font-size: 13px;
         }
 
+        .btn-search {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
         /* Questions List */
         .questions-list, .items-list {
             display: flex;
@@ -482,7 +486,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             padding: 20px;
             background: var(--gray-50);
             border-radius: 20px;
@@ -491,6 +495,32 @@
         .filter-bar select {
             flex: 1;
             min-width: 150px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+        }
+
+        .warning-message {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 16px 24px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .warning-message {
+            background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+            color: #fde68a;
         }
 
         /* Options Grid for MCQs */
@@ -576,8 +606,152 @@
             margin-top: 20px;
         }
 
-        /* Responsive */
+        /* Edit Modal */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .edit-modal.active {
+            display: flex;
+        }
+
+        .edit-modal-content {
+            background: var(--card-bg);
+            border-radius: 32px;
+            width: 90%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .edit-modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 28px;
+            border-radius: 32px 32px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .edit-modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .edit-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .edit-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .edit-modal-body {
+            padding: 28px;
+        }
+
+        .edit-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .edit-full-width {
+            grid-column: span 2;
+        }
+
+        .edit-options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .edit-option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .edit-option-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+
+        .edit-option-item input[type="text"] {
+            flex: 1;
+        }
+
+        .edit-tf-group {
+            display: flex;
+            gap: 24px;
+            margin-top: 12px;
+        }
+
+        .edit-tf-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .edit-modal-footer {
+            padding: 20px 28px 28px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
         @media (max-width: 768px) {
+            .edit-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .edit-full-width {
+                grid-column: span 1;
+            }
+            .edit-options-grid {
+                grid-template-columns: 1fr;
+            }
             body { padding: 16px; }
             .tabs-header { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; }
             .tab-btn { white-space: nowrap; }
@@ -591,7 +765,7 @@
         <div class="login-card">
             <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhdyuIMWOk4qbKO_qCaKOHo859JMs3To_OJjpQ8u5fU0ULewA-AdNp7Izuv9PUOIOTGTUsNM6DTVVbRWKe2OEDTBcHnxOnOrCylsq_V3YhUFPqTkPJ7XOuzWzbCXKW-UnoLEwqsE8XjaHiWPZu2dC_pESia4uQOATzelupKDAUbuO1_jH2003wsgUO0PPiO/s1080/Selah%20Elazhary%20Transperant%20logo.png" alt="Logo" class="login-logo">
             <h2>مرحباً بك</h2>
-            <p>اكتب الرقم السري يعم الحج علشان تتحكم في الموقع </p>
+            <p>اكتب الرقم السري يعم الحج علشان تتحكم في الموقع</p>
             <input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور الإدارية">
             <button class="login-btn" id="loginBtn">دخول <i class="fas fa-arrow-left"></i></button>
             <div class="login-error" id="loginError">كلمة المرور غير صحيحة</div>
@@ -674,10 +848,17 @@
             <!-- إدارة الأسئلة -->
             <div class="tab-content" id="manage-questions">
                 <div class="filter-bar">
-                    <select id="filterYear" class="form-control"><option value="">جميع الصفوف</option><option value="secondary1">الأول الثانوي</option><option value="secondary2">الثاني الثانوي</option><option value="secondary3">الثالث الثانوي</option></select>
-                    <select id="filterSection" class="form-control"><option value="">جميع الأقسام</option></select>
-                    <select id="filterSubject" class="form-control"><option value="">جميع المواد</option></select>
-                    <select id="filterType" class="form-control"><option value="">جميع الأنواع</option><option value="mcq">اختيار من متعدد</option><option value="truefalse">صح/خطأ</option></select>
+                    <select id="filterYear" class="form-control"><option value="">-- اختر الصف أولاً --</option><option value="secondary1">الأول الثانوي</option><option value="secondary2">الثاني الثانوي</option><option value="secondary3">الثالث الثانوي</option></select>
+                    <select id="filterSection" class="form-control" disabled><option value="">اختر الصف أولاً</option></select>
+                    <select id="filterSubject" class="form-control" disabled><option value="">اختر القسم أولاً</option></select>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="form-control" placeholder="🔍 ابحث عن سؤال... (نص السؤال، التصنيف، الخيارات)">
+                    <button class="btn-primary btn-search" id="searchBtn"><i class="fas fa-search"></i> بحث</button>
+                    <button class="btn-primary" id="resetSearchBtn" style="background: var(--gray-500);"><i class="fas fa-undo"></i> إعادة ضبط</button>
+                </div>
+                <div id="warningMessage" class="warning-message" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i> يرجى اختيار الصف والقسم والمادة أولاً لعرض الأسئلة
                 </div>
                 <div class="questions-list" id="questionsList"></div>
             </div>
@@ -743,6 +924,48 @@
         </div>
     </div>
 
+    <!-- Edit Question Modal -->
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <h2><i class="fas fa-edit"></i> تعديل السؤال</h2>
+                <button class="edit-modal-close" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="edit-modal-body">
+                <div class="edit-form-grid">
+                    <div class="edit-full-width">
+                        <div class="form-group"><label>نص السؤال</label><textarea id="editQText" class="form-control" rows="3"></textarea></div>
+                    </div>
+                    <div class="form-group"><label>نوع السؤال</label><select id="editQType" class="form-control"><option value="mcq">اختيار من متعدد</option><option value="truefalse">صح / خطأ</option></select></div>
+                    <div class="form-group"><label>مستوى الصعوبة</label><select id="editQDifficulty" class="form-control"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">صعب</option></select></div>
+                    <div class="form-group"><label>التصنيف</label><input type="text" id="editQCategory" class="form-control" placeholder="مثال: الفصل الأول"></div>
+                    <div class="form-group"><label>الصف الدراسي</label><select id="editQYear" class="form-control"><option value="">-- اختر الصف --</option><option value="secondary1">الصف الأول الثانوي</option><option value="secondary2">الصف الثاني الثانوي</option><option value="secondary3">الصف الثالث الثانوي</option></select></div>
+                    <div class="form-group"><label>القسم</label><select id="editQSection" class="form-control"></select></div>
+                    <div class="form-group"><label>المادة</label><select id="editQSubject" class="form-control"></select></div>
+                    <div class="form-group"><label>الدرس</label><select id="editQLesson" class="form-control"></select></div>
+                    <div class="form-group"><label>القسم الفرعي</label><select id="editQSublesson" class="form-control"></select></div>
+                    <div class="edit-full-width" id="editMcqSection">
+                        <label>الخيارات والإجابة الصحيحة</label>
+                        <div class="edit-options-grid">
+                            <div class="edit-option-item"><input type="radio" name="editCorrectOpt" value="1"><input type="text" id="editOpt1" class="form-control" placeholder="الخيار الأول"></div>
+                            <div class="edit-option-item"><input type="radio" name="editCorrectOpt" value="2"><input type="text" id="editOpt2" class="form-control" placeholder="الخيار الثاني"></div>
+                            <div class="edit-option-item"><input type="radio" name="editCorrectOpt" value="3"><input type="text" id="editOpt3" class="form-control" placeholder="الخيار الثالث"></div>
+                            <div class="edit-option-item"><input type="radio" name="editCorrectOpt" value="4"><input type="text" id="editOpt4" class="form-control" placeholder="الخيار الرابع"></div>
+                        </div>
+                    </div>
+                    <div class="edit-full-width" id="editTfSection" style="display:none">
+                        <label>الإجابة الصحيحة</label>
+                        <div class="edit-tf-group"><label><input type="radio" name="editTfCorrect" value="true"> صح</label><label><input type="radio" name="editTfCorrect" value="false"> خطأ</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-modal-footer">
+                <button class="btn-primary" id="saveEditBtn"><i class="fas fa-save"></i> حفظ التغييرات</button>
+                <button class="btn-primary btn-danger" onclick="closeEditModal()"><i class="fas fa-times"></i> إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
@@ -759,9 +982,11 @@
         const database = firebase.database();
 
         let adminPass = localStorage.getItem('adminPassword') || "gohary01010081147mo";
-        let sections = [], subjects = [], lessons = [], sublessons = [];
+        let sections = [], subjects = [], lessons = [], sublessons = [], allQuestions = [];
         let autoBackup = localStorage.getItem('autoBackup') !== 'false';
         let isDark = localStorage.getItem('darkMode') === 'true';
+        let currentEditId = null;
+        let currentSearchTerm = '';
 
         // DOM Elements
         const loginScreen = document.getElementById('loginScreen');
@@ -786,7 +1011,7 @@
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.tab).classList.add('active');
-                if(btn.dataset.tab === 'manage-questions') loadQuestions();
+                if(btn.dataset.tab === 'manage-questions') { updateFilterSections(); loadFilteredQuestions(); }
                 if(btn.dataset.tab === 'sections') loadSectionsList();
                 if(btn.dataset.tab === 'subjects') loadSubjectsList();
                 if(btn.dataset.tab === 'lessons') loadLessonsList();
@@ -801,7 +1026,149 @@
         const tfSection = document.getElementById('tfSection');
         qType.onchange = () => { if(qType.value === 'mcq') { mcqSection.style.display = 'block'; tfSection.style.display = 'none'; } else { mcqSection.style.display = 'none'; tfSection.style.display = 'block'; } };
 
-        // ========== التصفية المتتالية المتقدمة ==========
+        // ========== Filter Cascading for Manage Questions ==========
+        function updateFilterSections() {
+            const year = document.getElementById('filterYear').value;
+            const sectionSelect = document.getElementById('filterSection');
+            if(!year) { 
+                sectionSelect.innerHTML = '<option value="">اختر الصف أولاً</option>';
+                sectionSelect.disabled = true;
+                document.getElementById('filterSubject').innerHTML = '<option value="">اختر القسم أولاً</option>';
+                document.getElementById('filterSubject').disabled = true;
+                return;
+            }
+            const filtered = sections.filter(s => s.grades && s.grades.includes(year));
+            sectionSelect.innerHTML = '<option value="">-- اختر القسم --</option>';
+            filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; sectionSelect.appendChild(opt); });
+            sectionSelect.disabled = false;
+            document.getElementById('filterSubject').innerHTML = '<option value="">اختر القسم أولاً</option>';
+            document.getElementById('filterSubject').disabled = true;
+        }
+
+        function updateFilterSubjects() {
+            const section = document.getElementById('filterSection').value;
+            const year = document.getElementById('filterYear').value;
+            const subjectSelect = document.getElementById('filterSubject');
+            if(!section || !year) { 
+                subjectSelect.innerHTML = '<option value="">اختر القسم أولاً</option>';
+                subjectSelect.disabled = true;
+                return;
+            }
+            const filtered = subjects.filter(s => s.sectionId === section);
+            subjectSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
+            filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; subjectSelect.appendChild(opt); });
+            subjectSelect.disabled = false;
+        }
+
+        document.getElementById('filterYear').onchange = () => { updateFilterSections(); loadFilteredQuestions(); };
+        document.getElementById('filterSection').onchange = () => { updateFilterSubjects(); loadFilteredQuestions(); };
+        document.getElementById('filterSubject').onchange = () => loadFilteredQuestions();
+        document.getElementById('searchBtn').onclick = () => { currentSearchTerm = document.getElementById('searchInput').value.trim(); loadFilteredQuestions(); };
+        document.getElementById('resetSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; currentSearchTerm = ''; loadFilteredQuestions(); };
+        document.getElementById('searchInput').onkeypress = (e) => { if(e.key === 'Enter') { currentSearchTerm = document.getElementById('searchInput').value.trim(); loadFilteredQuestions(); } };
+
+        // Load all questions once and filter client-side
+        function loadAllQuestions() {
+            database.ref('questions').on('value', (snap) => {
+                allQuestions = [];
+                snap.forEach(c => {
+                    let q = c.val();
+                    q.id = c.key;
+                    allQuestions.push(q);
+                });
+                loadFilteredQuestions();
+                updateStats();
+            });
+        }
+
+        function loadFilteredQuestions() {
+            const year = document.getElementById('filterYear').value;
+            const section = document.getElementById('filterSection').value;
+            const subject = document.getElementById('filterSubject').value;
+            
+            const warningDiv = document.getElementById('warningMessage');
+            const questionsContainer = document.getElementById('questionsList');
+            
+            // Check if filters are complete
+            if(!year || !section || !subject) {
+                warningDiv.style.display = 'block';
+                questionsContainer.innerHTML = '';
+                return;
+            }
+            
+            warningDiv.style.display = 'none';
+            
+            // Filter questions
+            let filtered = allQuestions.filter(q => {
+                if(q.year !== year) return false;
+                if(q.section !== section) return false;
+                if(q.subject !== subject) return false;
+                return true;
+            });
+            
+            // Apply search
+            if(currentSearchTerm) {
+                const searchLower = currentSearchTerm.toLowerCase();
+                filtered = filtered.filter(q => {
+                    if(q.text && q.text.toLowerCase().includes(searchLower)) return true;
+                    if(q.category && q.category.toLowerCase().includes(searchLower)) return true;
+                    if(q.type === 'mcq') {
+                        for(let i=1; i<=4; i++) {
+                            if(q[`option${i}`] && q[`option${i}`].toLowerCase().includes(searchLower)) return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+            
+            // Display questions
+            let html = '';
+            filtered.forEach(q => {
+                let secName = sections.find(s=>s.id===q.section)?.name || '';
+                let subName = subjects.find(s=>s.id===q.subject)?.name || '';
+                let previewText = '';
+                if(q.type === 'mcq') {
+                    previewText = `1. ${q.option1 || ''}<br>2. ${q.option2 || ''}`;
+                } else {
+                    previewText = `الإجابة: ${q.correctAnswer === 'true' ? 'صح' : 'خطأ'}`;
+                }
+                html += `<div class="question-item">
+                            <div class="question-text">${escapeHtml(q.text)}</div>
+                            <div class="question-meta">
+                                <span><i class="fas fa-graduation-cap"></i> ${getYearText(q.year)}</span>
+                                <span><i class="fas fa-layer-group"></i> ${secName}</span>
+                                ${subName?`<span><i class="fas fa-book"></i> ${subName}</span>`:''}
+                                ${q.category?`<span><i class="fas fa-tag"></i> ${escapeHtml(q.category)}</span>`:''}
+                                <span><i class="fas fa-chart-line"></i> ${getDifficultyText(q.difficulty)}</span>
+                            </div>
+                            <div class="options-preview">${previewText}</div>
+                            <div class="item-actions">
+                                <button class="btn-primary btn-sm" onclick="openEditModal('${q.id}')"><i class="fas fa-edit"></i> تعديل</button>
+                                <button class="btn-primary btn-danger btn-sm" onclick="deleteQuestion('${q.id}')"><i class="fas fa-trash"></i> حذف</button>
+                            </div>
+                         </div>`;
+            });
+            questionsContainer.innerHTML = html || '<div style="text-align:center;padding:40px">لا توجد أسئلة تطابق المعايير</div>';
+        }
+        
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function getDifficultyText(diff) {
+            if(diff === 'easy') return 'سهل';
+            if(diff === 'medium') return 'متوسط';
+            if(diff === 'hard') return 'صعب';
+            return diff || 'متوسط';
+        }
+
+        // ========== التصفية المتتالية للإضافة ==========
         function updateSectionsByYear(year) {
             const sectionSelect = document.getElementById('qSection');
             if(!year) { sectionSelect.innerHTML = '<option value="">اختر الصف أولاً</option>'; sectionSelect.disabled = true; return; }
@@ -850,31 +1217,10 @@
             sublessonSelect.disabled = false;
         }
 
-        // Event Listeners for cascading
         document.getElementById('qYear').onchange = (e) => updateSectionsByYear(e.target.value);
         document.getElementById('qSection').onchange = (e) => updateSubjectsBySection(e.target.value);
         document.getElementById('qSubject').onchange = (e) => updateLessonsBySubject(e.target.value);
         document.getElementById('qLesson').onchange = (e) => updateSublessonsByLesson(e.target.value);
-
-        // Filter sections for manage questions
-        function updateFilterSections() {
-            const year = document.getElementById('filterYear').value;
-            const filterSection = document.getElementById('filterSection');
-            let filtered = year ? sections.filter(s => s.grades?.includes(year)) : sections;
-            filterSection.innerHTML = '<option value="">جميع الأقسام</option>';
-            filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; filterSection.appendChild(opt); });
-        }
-        function updateFilterSubjects() {
-            const section = document.getElementById('filterSection').value;
-            const filterSubject = document.getElementById('filterSubject');
-            let filtered = section ? subjects.filter(s => s.sectionId === section) : subjects;
-            filterSubject.innerHTML = '<option value="">جميع المواد</option>';
-            filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; filterSubject.appendChild(opt); });
-        }
-        document.getElementById('filterYear').onchange = () => { updateFilterSections(); loadQuestions(); };
-        document.getElementById('filterSection').onchange = () => { updateFilterSubjects(); loadQuestions(); };
-        document.getElementById('filterSubject').onchange = () => loadQuestions();
-        document.getElementById('filterType').onchange = () => loadQuestions();
 
         // Load Data from Firebase
         function loadSections() { database.ref('sections').on('value', (snap) => { sections = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sections.push(s); }); updateFilterSections(); loadSectionsList(); if(document.getElementById('qYear').value) updateSectionsByYear(document.getElementById('qYear').value); }); }
@@ -903,37 +1249,188 @@
                 if(!correct) { alert('حدد الإجابة الصحيحة'); return; }
                 data.correctAnswer = correct;
             }
-            database.ref('questions').push(data).then(() => { alert('تمت الإضافة'); clearQuestionForm(); loadQuestions(); updateStats(); createBackup(); });
+            database.ref('questions').push(data).then(() => { alert('تمت الإضافة'); clearQuestionForm(); loadFilteredQuestions(); updateStats(); createBackup(); });
         };
+        
         function clearQuestionForm() {
             document.getElementById('qText').value = '';
             document.getElementById('qCategory').value = '';
+            document.getElementById('qDifficulty').value = 'medium';
             ['opt1','opt2','opt3','opt4'].forEach(id => document.getElementById(id).value = '');
             document.querySelectorAll('input[name="correctOpt"]').forEach(r => r.checked = false);
             document.querySelectorAll('input[name="tfCorrect"]').forEach(r => r.checked = false);
         }
 
-        function loadQuestions() {
-            let year = document.getElementById('filterYear').value;
-            let section = document.getElementById('filterSection').value;
-            let subject = document.getElementById('filterSubject').value;
-            let type = document.getElementById('filterType').value;
-            database.ref('questions').once('value', (snap) => {
-                let html = '';
-                snap.forEach(c => {
-                    let q = c.val(); q.id = c.key;
-                    if((!year || q.year === year) && (!section || q.section === section) && (!subject || q.subject === subject) && (!type || q.type === type)) {
-                        let secName = sections.find(s=>s.id===q.section)?.name || '';
-                        let subName = subjects.find(s=>s.id===q.subject)?.name || '';
-                        html += `<div class="question-item"><div class="question-text">${q.text}</div><div class="question-meta"><span><i class="fas fa-graduation-cap"></i> ${getYearText(q.year)}</span><span><i class="fas fa-layer-group"></i> ${secName}</span>${subName?`<span><i class="fas fa-book"></i> ${subName}</span>`:''}</div><div class="options-preview">${q.type==='mcq'?`1. ${q.option1||''}<br>2. ${q.option2||''}`:`الإجابة: ${q.correctAnswer==='true'?'صح':'خطأ'}`}</div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editQuestion('${q.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteQuestion('${q.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`;
+        window.deleteQuestion = (id) => { if(confirm('حذف السؤال؟')) database.ref('questions/'+id).remove().then(()=>{ loadFilteredQuestions(); updateStats(); createBackup(); }); };
+        
+        // Professional Edit Function
+        window.openEditModal = (id) => {
+            currentEditId = id;
+            database.ref('questions/'+id).once('value', (snap) => {
+                let q = snap.val();
+                if(!q) return;
+                
+                document.getElementById('editQText').value = q.text || '';
+                document.getElementById('editQType').value = q.type || 'mcq';
+                document.getElementById('editQDifficulty').value = q.difficulty || 'medium';
+                document.getElementById('editQCategory').value = q.category || '';
+                document.getElementById('editQYear').value = q.year || '';
+                
+                updateEditSectionsByYear(q.year);
+                setTimeout(() => {
+                    if(q.section) {
+                        document.getElementById('editQSection').value = q.section;
+                        updateEditSubjectsBySection(q.section);
+                        setTimeout(() => {
+                            if(q.subject) {
+                                document.getElementById('editQSubject').value = q.subject;
+                                updateEditLessonsBySubject(q.subject);
+                                setTimeout(() => {
+                                    if(q.lesson) {
+                                        document.getElementById('editQLesson').value = q.lesson;
+                                        updateEditSublessonsByLesson(q.lesson);
+                                        setTimeout(() => {
+                                            if(q.sublesson) document.getElementById('editQSublesson').value = q.sublesson;
+                                        }, 100);
+                                    }
+                                }, 100);
+                            }
+                        }, 100);
                     }
-                });
-                document.getElementById('questionsList').innerHTML = html || '<div style="text-align:center;padding:40px">لا توجد أسئلة</div>';
+                }, 100);
+                
+                const editMcqDiv = document.getElementById('editMcqSection');
+                const editTfDiv = document.getElementById('editTfSection');
+                
+                if(q.type === 'mcq') {
+                    editMcqDiv.style.display = 'block';
+                    editTfDiv.style.display = 'none';
+                    document.getElementById('editOpt1').value = q.option1 || '';
+                    document.getElementById('editOpt2').value = q.option2 || '';
+                    document.getElementById('editOpt3').value = q.option3 || '';
+                    document.getElementById('editOpt4').value = q.option4 || '';
+                    document.querySelectorAll('input[name="editCorrectOpt"]').forEach(r => r.checked = false);
+                    if(q.correctAnswer) document.querySelector(`input[name="editCorrectOpt"][value="${q.correctAnswer}"]`).checked = true;
+                } else {
+                    editMcqDiv.style.display = 'none';
+                    editTfDiv.style.display = 'block';
+                    document.querySelectorAll('input[name="editTfCorrect"]').forEach(r => r.checked = false);
+                    if(q.correctAnswer === 'true') document.querySelector('input[name="editTfCorrect"][value="true"]').checked = true;
+                    if(q.correctAnswer === 'false') document.querySelector('input[name="editTfCorrect"][value="false"]').checked = true;
+                }
+                
+                document.getElementById('editModal').classList.add('active');
             });
+        };
+        
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            currentEditId = null;
         }
-
-        window.deleteQuestion = (id) => { if(confirm('حذف السؤال؟')) database.ref('questions/'+id).remove().then(()=>{ loadQuestions(); updateStats(); createBackup(); }); };
-        window.editQuestion = (id) => { database.ref('questions/'+id).once('value', (snap) => { let q = snap.val(); let newText = prompt('تعديل نص السؤال:', q.text); if(newText && newText.trim()) database.ref('questions/'+id).update({ text: newText.trim() }).then(()=>{ loadQuestions(); createBackup(); }); }); };
+        
+        function updateEditSectionsByYear(year) {
+            const sectionSelect = document.getElementById('editQSection');
+            if(!year) { sectionSelect.innerHTML = '<option value="">اختر الصف أولاً</option>'; sectionSelect.disabled = true; return; }
+            const filtered = sections.filter(s => s.grades && s.grades.includes(year));
+            sectionSelect.innerHTML = '<option value="">-- اختر القسم --</option>';
+            filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; sectionSelect.appendChild(opt); });
+            sectionSelect.disabled = false;
+            document.getElementById('editQSubject').innerHTML = '<option value="">اختر القسم أولاً</option>';
+            document.getElementById('editQSubject').disabled = true;
+            document.getElementById('editQLesson').innerHTML = '<option value="">اختر المادة أولاً</option>';
+            document.getElementById('editQLesson').disabled = true;
+            document.getElementById('editQSublesson').innerHTML = '<option value="">اختر الدرس أولاً</option>';
+            document.getElementById('editQSublesson').disabled = true;
+        }
+        
+        function updateEditSubjectsBySection(sectionId) {
+            const subjectSelect = document.getElementById('editQSubject');
+            if(!sectionId) { subjectSelect.innerHTML = '<option value="">اختر القسم أولاً</option>'; subjectSelect.disabled = true; return; }
+            const filtered = subjects.filter(s => s.sectionId === sectionId);
+            subjectSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
+            filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; subjectSelect.appendChild(opt); });
+            subjectSelect.disabled = false;
+            document.getElementById('editQLesson').innerHTML = '<option value="">اختر المادة أولاً</option>';
+            document.getElementById('editQLesson').disabled = true;
+            document.getElementById('editQSublesson').innerHTML = '<option value="">اختر الدرس أولاً</option>';
+            document.getElementById('editQSublesson').disabled = true;
+        }
+        
+        function updateEditLessonsBySubject(subjectId) {
+            const lessonSelect = document.getElementById('editQLesson');
+            if(!subjectId) { lessonSelect.innerHTML = '<option value="">اختر المادة أولاً</option>'; lessonSelect.disabled = true; return; }
+            const filtered = lessons.filter(l => l.subjectId === subjectId);
+            lessonSelect.innerHTML = '<option value="">-- اختر الدرس --</option>';
+            filtered.forEach(l => { const opt = document.createElement('option'); opt.value = l.id; opt.textContent = l.name; lessonSelect.appendChild(opt); });
+            lessonSelect.disabled = false;
+            document.getElementById('editQSublesson').innerHTML = '<option value="">اختر الدرس أولاً</option>';
+            document.getElementById('editQSublesson').disabled = true;
+        }
+        
+        function updateEditSublessonsByLesson(lessonId) {
+            const sublessonSelect = document.getElementById('editQSublesson');
+            if(!lessonId) { sublessonSelect.innerHTML = '<option value="">اختر الدرس أولاً</option>'; sublessonSelect.disabled = true; return; }
+            const filtered = sublessons.filter(sl => sl.lessonId === lessonId);
+            sublessonSelect.innerHTML = '<option value="">-- اختر القسم الفرعي --</option>';
+            filtered.forEach(sl => { const opt = document.createElement('option'); opt.value = sl.id; opt.textContent = sl.name; sublessonSelect.appendChild(opt); });
+            sublessonSelect.disabled = false;
+        }
+        
+        document.getElementById('editQYear').onchange = (e) => updateEditSectionsByYear(e.target.value);
+        document.getElementById('editQSection').onchange = (e) => updateEditSubjectsBySection(e.target.value);
+        document.getElementById('editQSubject').onchange = (e) => updateEditLessonsBySubject(e.target.value);
+        document.getElementById('editQLesson').onchange = (e) => updateEditSublessonsByLesson(e.target.value);
+        
+        document.getElementById('saveEditBtn').onclick = () => {
+            if(!currentEditId) return;
+            let text = document.getElementById('editQText').value.trim();
+            if(!text) { alert('أدخل نص السؤال'); return; }
+            let type = document.getElementById('editQType').value;
+            let year = document.getElementById('editQYear').value;
+            let section = document.getElementById('editQSection').value;
+            if(!year) { alert('اختر الصف الدراسي'); return; }
+            if(!section) { alert('اختر القسم'); return; }
+            let updateData = {
+                text: text,
+                type: type,
+                category: document.getElementById('editQCategory').value,
+                difficulty: document.getElementById('editQDifficulty').value,
+                year: year,
+                section: section,
+                subject: document.getElementById('editQSubject').value || '',
+                lesson: document.getElementById('editQLesson').value || '',
+                sublesson: document.getElementById('editQSublesson').value || '',
+                updatedAt: new Date().toISOString()
+            };
+            if(type === 'mcq') {
+                updateData.option1 = document.getElementById('editOpt1').value.trim();
+                updateData.option2 = document.getElementById('editOpt2').value.trim();
+                updateData.option3 = document.getElementById('editOpt3').value.trim();
+                updateData.option4 = document.getElementById('editOpt4').value.trim();
+                let correct = document.querySelector('input[name="editCorrectOpt"]:checked')?.value;
+                if(!correct) { alert('حدد الإجابة الصحيحة'); return; }
+                updateData.correctAnswer = correct;
+            } else {
+                let correct = document.querySelector('input[name="editTfCorrect"]:checked')?.value;
+                if(!correct) { alert('حدد الإجابة الصحيحة'); return; }
+                updateData.correctAnswer = correct;
+            }
+            database.ref('questions/'+currentEditId).update(updateData).then(() => {
+                alert('تم تعديل السؤال بنجاح');
+                closeEditModal();
+                loadFilteredQuestions();
+                updateStats();
+                createBackup();
+            }).catch(err => alert('خطأ: '+err.message));
+        };
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape' && document.getElementById('editModal').classList.contains('active')) closeEditModal();
+        });
+        document.getElementById('editModal').onclick = (e) => {
+            if(e.target === document.getElementById('editModal')) closeEditModal();
+        };
+        
         function getYearText(y) { if(y==='secondary1') return 'أول ثانوي'; if(y==='secondary2') return 'ثاني ثانوي'; if(y==='secondary3') return 'ثالث ثانوي'; return y; }
 
         // Sections CRUD
@@ -944,7 +1441,7 @@
             if(!grades.length) { alert('اختر صفاً'); return; }
             database.ref('sections').push({ name, description: document.getElementById('sectionDesc').value, icon: document.getElementById('sectionIcon').value, grades }).then(()=>{ document.getElementById('sectionName').value = ''; document.getElementById('sectionDesc').value = ''; document.querySelectorAll('input[name="sectionGrades"]').forEach(c=>c.checked=false); createBackup(); });
         };
-        function loadSectionsList() { database.ref('sections').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; html += `<div class="list-item"><div><strong>${s.name}</strong><div class="question-meta"><span>${s.grades?.map(g=>getYearText(g)).join(', ')}</span></div><p>${s.description||''}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSection('${s.id}','${s.name}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSection('${s.id}')">حذف</button></div></div>`; }); document.getElementById('sectionsList').innerHTML = html || '<div>لا توجد أقسام</div>'; }); }
+        function loadSectionsList() { database.ref('sections').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; html += `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${s.grades?.map(g=>getYearText(g)).join(', ')}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSection('${s.id}','${escapeHtml(s.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSection('${s.id}')">حذف</button></div></div>`; }); document.getElementById('sectionsList').innerHTML = html || '<div>لا توجد أقسام</div>'; }); }
         window.deleteSection = (id) => { if(confirm('حذف القسم؟')) database.ref('sections/'+id).remove().then(()=>{ loadSectionsList(); createBackup(); }); };
         window.editSection = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('sections/'+id).update({ name: newName.trim() }).then(()=>{ loadSectionsList(); createBackup(); }); };
 
@@ -956,7 +1453,7 @@
             if(!section) { alert('اختر القسم'); return; }
             database.ref('subjects').push({ name, description: document.getElementById('subjectDesc').value, sectionId: section, icon: document.getElementById('subjectIcon').value }).then(()=>{ document.getElementById('subjectName').value = ''; document.getElementById('subjectDesc').value = ''; createBackup(); });
         };
-        function loadSubjectsList() { database.ref('subjects').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; let secName = sections.find(sec=>sec.id===s.sectionId)?.name||''; html += `<div class="list-item"><div><strong>${s.name}</strong><div class="question-meta"><span>${secName}</span></div><p>${s.description||''}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSubject('${s.id}','${s.name}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSubject('${s.id}')">حذف</button></div></div>`; }); document.getElementById('subjectsList').innerHTML = html || '<div>لا توجد مواد</div>'; }); }
+        function loadSubjectsList() { database.ref('subjects').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; let secName = sections.find(sec=>sec.id===s.sectionId)?.name||''; html += `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(secName)}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSubject('${s.id}','${escapeHtml(s.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSubject('${s.id}')">حذف</button></div></div>`; }); document.getElementById('subjectsList').innerHTML = html || '<div>لا توجد مواد</div>'; }); }
         window.deleteSubject = (id) => { if(confirm('حذف المادة؟')) database.ref('subjects/'+id).remove().then(()=>{ loadSubjectsList(); createBackup(); }); };
         window.editSubject = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('subjects/'+id).update({ name: newName.trim() }).then(()=>{ loadSubjectsList(); createBackup(); }); };
 
@@ -968,7 +1465,7 @@
             if(!subject) { alert('اختر المادة'); return; }
             database.ref('lessons').push({ name, description: document.getElementById('lessonDesc').value, subjectId: subject, icon: document.getElementById('lessonIcon').value, order: parseInt(document.getElementById('lessonOrder').value)||1 }).then(()=>{ document.getElementById('lessonName').value = ''; document.getElementById('lessonDesc').value = ''; createBackup(); });
         };
-        function loadLessonsList() { database.ref('lessons').once('value', (snap) => { let html = ''; snap.forEach(c => { let l = c.val(); l.id = c.key; let subName = subjects.find(s=>s.id===l.subjectId)?.name||''; html += `<div class="list-item"><div><strong>${l.name}</strong><div class="question-meta"><span>${subName}</span><span>ترتيب: ${l.order||1}</span></div><p>${l.description||''}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editLesson('${l.id}','${l.name}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteLesson('${l.id}')">حذف</button></div></div>`; }); document.getElementById('lessonsList').innerHTML = html || '<div>لا توجد دروس</div>'; }); }
+        function loadLessonsList() { database.ref('lessons').once('value', (snap) => { let html = ''; snap.forEach(c => { let l = c.val(); l.id = c.key; let subName = subjects.find(s=>s.id===l.subjectId)?.name||''; html += `<div class="list-item"><div><strong>${escapeHtml(l.name)}</strong><div class="question-meta"><span>${escapeHtml(subName)}</span><span>ترتيب: ${l.order||1}</span></div><p>${escapeHtml(l.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editLesson('${l.id}','${escapeHtml(l.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteLesson('${l.id}')">حذف</button></div></div>`; }); document.getElementById('lessonsList').innerHTML = html || '<div>لا توجد دروس</div>'; }); }
         window.deleteLesson = (id) => { if(confirm('حذف الدرس؟')) database.ref('lessons/'+id).remove().then(()=>{ loadLessonsList(); createBackup(); }); };
         window.editLesson = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('lessons/'+id).update({ name: newName.trim() }).then(()=>{ loadLessonsList(); createBackup(); }); };
 
@@ -980,7 +1477,7 @@
             if(!lesson) { alert('اختر الدرس'); return; }
             database.ref('sublessons').push({ name, description: document.getElementById('sublessonDesc').value, lessonId: lesson, icon: document.getElementById('sublessonIcon').value, order: parseInt(document.getElementById('sublessonOrder').value)||1 }).then(()=>{ document.getElementById('sublessonName').value = ''; document.getElementById('sublessonDesc').value = ''; createBackup(); });
         };
-        function loadSublessonsList() { database.ref('sublessons').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; let lessonName = lessons.find(l=>l.id===s.lessonId)?.name||''; html += `<div class="list-item"><div><strong>${s.name}</strong><div class="question-meta"><span>${lessonName}</span><span>ترتيب: ${s.order||1}</span></div><p>${s.description||''}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSublesson('${s.id}','${s.name}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSublesson('${s.id}')">حذف</button></div></div>`; }); document.getElementById('sublessonsList').innerHTML = html || '<div>لا توجد أقسام فرعية</div>'; }); }
+        function loadSublessonsList() { database.ref('sublessons').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; let lessonName = lessons.find(l=>l.id===s.lessonId)?.name||''; html += `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(lessonName)}</span><span>ترتيب: ${s.order||1}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSublesson('${s.id}','${escapeHtml(s.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSublesson('${s.id}')">حذف</button></div></div>`; }); document.getElementById('sublessonsList').innerHTML = html || '<div>لا توجد أقسام فرعية</div>'; }); }
         window.deleteSublesson = (id) => { if(confirm('حذف القسم الفرعي؟')) database.ref('sublessons/'+id).remove().then(()=>{ loadSublessonsList(); createBackup(); }); };
         window.editSublesson = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('sublessons/'+id).update({ name: newName.trim() }).then(()=>{ loadSublessonsList(); createBackup(); }); };
 
@@ -996,7 +1493,7 @@
         };
 
         // Results
-        function loadResults() { database.ref('quizResults').once('value', (snap) => { let html = ''; let results = []; snap.forEach(c => results.push(c.val())); results.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,20).forEach(r => { html += `<div class="result-item"><div><strong>${r.userName||'زائر'}</strong><div class="question-meta"><span>${r.percentage}%</span><span>${r.timeTaken||'00:00'}</span></div></div><div>${new Date(r.timestamp).toLocaleDateString('ar-SA')}</div></div>`; }); document.getElementById('resultsList').innerHTML = html || '<div>لا توجد نتائج</div>'; }); }
+        function loadResults() { database.ref('quizResults').once('value', (snap) => { let html = ''; let results = []; snap.forEach(c => results.push(c.val())); results.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,20).forEach(r => { html += `<div class="result-item"><div><strong>${escapeHtml(r.userName||'زائر')}</strong><div class="question-meta"><span>${r.percentage}%</span><span>${r.timeTaken||'00:00'}</span></div></div><div>${new Date(r.timestamp).toLocaleDateString('ar-SA')}</div></div>`; }); document.getElementById('resultsList').innerHTML = html || '<div>لا توجد نتائج</div>'; }); }
 
         // Ads
         document.getElementById('saveAdBtn').onclick = () => { let title = document.getElementById('adTitle').value.trim(); if(!title) { alert('أدخل عنوان الإعلان'); return; } let ad = { title, description: document.getElementById('adDesc').value, url: document.getElementById('adUrl').value, status: document.getElementById('adStatus').value }; database.ref('ads').set(ad).then(()=>{ alert('تم حفظ الإعلان'); createBackup(); }); };
@@ -1016,7 +1513,7 @@
 
         function loadAd() { database.ref('ads').once('value', (snap) => { if(snap.exists()) { let ad = snap.val(); document.getElementById('adTitle').value = ad.title||''; document.getElementById('adDesc').value = ad.description||''; document.getElementById('adUrl').value = ad.url||''; document.getElementById('adStatus').value = ad.status||'active'; document.getElementById('previewTitle').innerText = ad.title||'عنوان الإعلان'; document.getElementById('previewDesc').innerText = ad.description||'وصف الإعلان'; } }); }
 
-        function initApp() { loadSections(); loadSubjects(); loadLessons(); loadSublessons(); updateStats(); loadResults(); loadAd(); let last = localStorage.getItem('lastBackup'); if(last) document.getElementById('lastBackupInfo').innerHTML = new Date(last).toLocaleString('ar-SA'); document.getElementById('autoBackupCheck').checked = autoBackup; }
+        function initApp() { loadSections(); loadSubjects(); loadLessons(); loadSublessons(); loadAllQuestions(); updateStats(); loadResults(); loadAd(); let last = localStorage.getItem('lastBackup'); if(last) document.getElementById('lastBackupInfo').innerHTML = new Date(last).toLocaleString('ar-SA'); document.getElementById('autoBackupCheck').checked = autoBackup; }
     </script>
 </body>
 </html>
