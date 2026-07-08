@@ -758,6 +758,50 @@
             .tab-content { padding: 20px; }
             .stats-grid { grid-template-columns: 1fr; }
         }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            color: var(--gray-800);
+            padding: 14px 22px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-16px);
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-200);
+            max-width: 90vw;
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast-success { border-inline-start: 4px solid var(--success); }
+        .toast-success i { color: var(--success); }
+        .toast-error { border-inline-start: 4px solid var(--danger); }
+        .toast-error i { color: var(--danger); }
+        .toast-info { border-inline-start: 4px solid var(--primary); }
+        .toast-info i { color: var(--primary); }
+
+        /* Copy Link Button */
+        .btn-copy {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
     </style>
 </head>
 <body>
@@ -858,7 +902,7 @@
                     <button class="btn-primary" id="resetSearchBtn" style="background: var(--gray-500);"><i class="fas fa-undo"></i> إعادة ضبط</button>
                 </div>
                 <div id="warningMessage" class="warning-message" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i> يرجى اختيار الصف والقسم والمادة أولاً لعرض الأسئلة
+                    <i class="fas fa-exclamation-triangle"></i> يرجى اختيار الصف والقسم أولاً لعرض الأسئلة (المادة اختيارية)
                 </div>
                 <div class="questions-list" id="questionsList"></div>
             </div>
@@ -867,7 +911,7 @@
             <div class="tab-content" id="sections">
                 <div class="form-grid">
                     <div class="form-section"><h3><i class="fas fa-plus-circle"></i> إضافة قسم جديد</h3><div class="form-group"><label>اسم القسم</label><input type="text" id="sectionName" class="form-control"></div><div class="form-group"><label>وصف القسم</label><textarea id="sectionDesc" class="form-control"></textarea></div><div class="form-group"><label>أيقونة القسم</label><select id="sectionIcon" class="form-control"><option value="fas fa-book">كتاب</option><option value="fas fa-flask">علوم</option><option value="fas fa-calculator">رياضيات</option></select></div><div class="form-group"><label>الصفوف المرتبطة</label><div class="grades-group"><label><input type="checkbox" name="sectionGrades" value="secondary1"> أول ثانوي</label><label><input type="checkbox" name="sectionGrades" value="secondary2"> ثاني ثانوي</label><label><input type="checkbox" name="sectionGrades" value="secondary3"> ثالث ثانوي</label></div></div><button class="btn-primary" id="addSectionBtn"><i class="fas fa-plus"></i> إضافة القسم</button></div>
-                    <div class="form-section"><h3><i class="fas fa-list"></i> الأقسام الحالية</h3><div class="items-list" id="sectionsList"></div></div>
+                    <div class="form-section"><h3><i class="fas fa-list"></i> الأقسام الحالية</h3><input type="text" id="searchSections" class="form-control" placeholder="🔍 ابحث في الأقسام..." oninput="loadSectionsList()" style="margin-bottom:16px"><div class="items-list" id="sectionsList"></div></div>
                 </div>
             </div>
 
@@ -875,7 +919,7 @@
             <div class="tab-content" id="subjects">
                 <div class="form-grid">
                     <div class="form-section"><h3><i class="fas fa-plus-circle"></i> إضافة مادة</h3><div class="form-group"><label>اسم المادة</label><input type="text" id="subjectName" class="form-control"></div><div class="form-group"><label>الوصف</label><textarea id="subjectDesc" class="form-control"></textarea></div><div class="form-group"><label>القسم التابع</label><select id="subjectSection" class="form-control"></select></div><div class="form-group"><label>الأيقونة</label><select id="subjectIcon" class="form-control"><option value="fa-atom">علوم</option><option value="fa-flask">كيمياء</option><option value="fa-calculator">رياضيات</option></select></div><button class="btn-primary" id="addSubjectBtn"><i class="fas fa-plus"></i> إضافة المادة</button></div>
-                    <div class="form-section"><h3><i class="fas fa-list"></i> المواد الحالية</h3><div class="items-list" id="subjectsList"></div></div>
+                    <div class="form-section"><h3><i class="fas fa-list"></i> المواد الحالية</h3><input type="text" id="searchSubjects" class="form-control" placeholder="🔍 ابحث في المواد..." oninput="loadSubjectsList()" style="margin-bottom:16px"><div class="items-list" id="subjectsList"></div></div>
                 </div>
             </div>
 
@@ -883,7 +927,7 @@
             <div class="tab-content" id="lessons">
                 <div class="form-grid">
                     <div class="form-section"><h3><i class="fas fa-plus-circle"></i> إضافة درس</h3><div class="form-group"><label>اسم الدرس</label><input type="text" id="lessonName" class="form-control"></div><div class="form-group"><label>الوصف</label><textarea id="lessonDesc" class="form-control"></textarea></div><div class="form-group"><label>المادة</label><select id="lessonSubject" class="form-control"></select></div><div class="form-group"><label>الأيقونة</label><select id="lessonIcon" class="form-control"><option value="fa-book-open">كتاب مفتوح</option><option value="fa-chalkboard-teacher">سبورة</option></select></div><div class="form-group"><label>الترتيب</label><input type="number" id="lessonOrder" class="form-control" value="1"></div><button class="btn-primary" id="addLessonBtn"><i class="fas fa-plus"></i> إضافة الدرس</button></div>
-                    <div class="form-section"><h3><i class="fas fa-list"></i> الدروس الحالية</h3><div class="items-list" id="lessonsList"></div></div>
+                    <div class="form-section"><h3><i class="fas fa-list"></i> الدروس الحالية</h3><input type="text" id="searchLessons" class="form-control" placeholder="🔍 ابحث في الدروس..." oninput="loadLessonsList()" style="margin-bottom:16px"><div class="items-list" id="lessonsList"></div></div>
                 </div>
             </div>
 
@@ -891,14 +935,14 @@
             <div class="tab-content" id="sublessons">
                 <div class="form-grid">
                     <div class="form-section"><h3><i class="fas fa-plus-circle"></i> إضافة قسم فرعي</h3><div class="form-group"><label>الاسم</label><input type="text" id="sublessonName" class="form-control"></div><div class="form-group"><label>الوصف</label><textarea id="sublessonDesc" class="form-control"></textarea></div><div class="form-group"><label>الدرس التابع</label><select id="sublessonLesson" class="form-control"></select></div><div class="form-group"><label>الأيقونة</label><select id="sublessonIcon" class="form-control"><option value="fa-folder">مجلد</option><option value="fa-folder-open">مجلد مفتوح</option></select></div><div class="form-group"><label>الترتيب</label><input type="number" id="sublessonOrder" class="form-control" value="1"></div><button class="btn-primary" id="addSublessonBtn"><i class="fas fa-plus"></i> إضافة</button></div>
-                    <div class="form-section"><h3><i class="fas fa-list"></i> الأقسام الفرعية</h3><div class="items-list" id="sublessonsList"></div></div>
+                    <div class="form-section"><h3><i class="fas fa-list"></i> الأقسام الفرعية</h3><input type="text" id="searchSublessons" class="form-control" placeholder="🔍 ابحث في الأقسام الفرعية..." oninput="loadSublessonsList()" style="margin-bottom:16px"><div class="items-list" id="sublessonsList"></div></div>
                 </div>
             </div>
 
             <!-- الإعدادات -->
             <div class="tab-content" id="settings">
                 <div class="form-grid">
-                    <div class="form-section"><h3><i class="fas fa-cog"></i> إعدادات النظام</h3><div class="form-group"><label>مدة الاختبار (دقائق)</label><input type="number" id="examTime" class="form-control" min="1" max="120" value="10"></div><div class="form-group"><label>حالة الاختبارات</label><div class="grades-group"><label><input type="checkbox" id="examActive" checked> تفعيل الاختبارات</label></div></div><div class="form-group"><label>كلمة المرور الإدارية</label><input type="password" id="adminPassSetting" class="form-control" value="gohary01010081147mo"></div><button class="btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> حفظ الإعدادات</button></div>
+                    <div class="form-section"><h3><i class="fas fa-cog"></i> إعدادات النظام</h3><div class="form-group"><label>مدة الاختبار (دقائق)</label><input type="number" id="examTime" class="form-control" min="1" max="120" value="10"></div><div class="form-group"><label>حالة الاختبارات</label><div class="grades-group"><label><input type="checkbox" id="examActive" checked> تفعيل الاختبارات</label></div></div><div class="form-group"><label>كلمة المرور الإدارية</label><input type="password" id="adminPassSetting" class="form-control" placeholder="اتركه فارغاً لعدم التغيير" autocomplete="new-password"></div><button class="btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> حفظ الإعدادات</button></div>
                 </div>
             </div>
 
@@ -962,6 +1006,47 @@
             <div class="edit-modal-footer">
                 <button class="btn-primary" id="saveEditBtn"><i class="fas fa-save"></i> حفظ التغييرات</button>
                 <button class="btn-primary btn-danger" onclick="closeEditModal()"><i class="fas fa-times"></i> إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Confirmation Modal (delete gate) -->
+    <div class="edit-modal" id="pwModal">
+        <div class="edit-modal-content" style="max-width:440px">
+            <div class="edit-modal-header" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%)">
+                <h2><i class="fas fa-shield-alt"></i> تأكيد بالرقم السري</h2>
+                <button class="edit-modal-close" onclick="closePwModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="edit-modal-body">
+                <p id="pwModalMsg" style="margin-bottom:16px;color:var(--gray-700);font-weight:600">أدخل الرقم السري لتأكيد الحذف</p>
+                <input type="password" id="pwModalInput" class="form-control" placeholder="الرقم السري" autocomplete="off">
+                <div id="pwModalError" style="color:var(--danger);margin-top:10px;font-weight:600;display:none"><i class="fas fa-times-circle"></i> الرقم السري غير صحيح</div>
+            </div>
+            <div class="edit-modal-footer">
+                <button class="btn-primary btn-danger" id="pwModalConfirm"><i class="fas fa-check"></i> تأكيد</button>
+                <button class="btn-primary" style="background:var(--gray-500)" onclick="closePwModal()"><i class="fas fa-times"></i> إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Edit Modal (sections / subjects / lessons / sublessons) -->
+    <div class="edit-modal" id="taxEditModal">
+        <div class="edit-modal-content" style="max-width:640px">
+            <div class="edit-modal-header">
+                <h2><i class="fas fa-edit"></i> <span id="taxEditTitle">تعديل</span></h2>
+                <button class="edit-modal-close" onclick="closeTaxEdit()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="edit-modal-body">
+                <div class="form-group"><label>الاسم</label><input type="text" id="taxEditName" class="form-control"></div>
+                <div class="form-group"><label>الوصف</label><textarea id="taxEditDesc" class="form-control" rows="2"></textarea></div>
+                <div class="form-group" id="taxEditParentGroup"><label id="taxEditParentLabel">القسم التابع</label><select id="taxEditParent" class="form-control"></select></div>
+                <div class="form-group"><label>الأيقونة (Font Awesome)</label><input type="text" id="taxEditIcon" class="form-control" placeholder="مثال: fas fa-book"></div>
+                <div class="form-group" id="taxEditOrderGroup"><label>الترتيب</label><input type="number" id="taxEditOrder" class="form-control" min="1" value="1"></div>
+                <div class="form-group" id="taxEditGradesGroup"><label>الصفوف المرتبطة</label><div class="grades-group"><label><input type="checkbox" class="taxEditGrade" value="secondary1"> أول ثانوي</label><label><input type="checkbox" class="taxEditGrade" value="secondary2"> ثاني ثانوي</label><label><input type="checkbox" class="taxEditGrade" value="secondary3"> ثالث ثانوي</label></div></div>
+            </div>
+            <div class="edit-modal-footer">
+                <button class="btn-primary" id="taxEditSaveBtn"><i class="fas fa-save"></i> حفظ التغييرات</button>
+                <button class="btn-primary btn-danger" onclick="closeTaxEdit()"><i class="fas fa-times"></i> إلغاء</button>
             </div>
         </div>
     </div>
@@ -1089,20 +1174,20 @@
             const warningDiv = document.getElementById('warningMessage');
             const questionsContainer = document.getElementById('questionsList');
             
-            // Check if filters are complete
-            if(!year || !section || !subject) {
+            // Require year + section; subject is an optional extra filter
+            if(!year || !section) {
                 warningDiv.style.display = 'block';
                 questionsContainer.innerHTML = '';
                 return;
             }
-            
+
             warningDiv.style.display = 'none';
-            
+
             // Filter questions
             let filtered = allQuestions.filter(q => {
                 if(q.year !== year) return false;
                 if(q.section !== section) return false;
-                if(q.subject !== subject) return false;
+                if(subject && q.subject !== subject) return false;
                 return true;
             });
             
@@ -1151,6 +1236,89 @@
             questionsContainer.innerHTML = html || '<div style="text-align:center;padding:40px">لا توجد أسئلة تطابق المعايير</div>';
         }
         
+        // ========== Toast Notifications ==========
+        function showToast(html, type = 'info') {
+            let container = document.getElementById('toastContainer');
+            if(!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = html;
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2600);
+        }
+
+        // ========== Copy Firebase ID (Link) ==========
+        function fallbackCopy(text, onSuccess) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.top = '-9999px';
+            ta.setAttribute('readonly', '');
+            document.body.appendChild(ta);
+            ta.select();
+            ta.setSelectionRange(0, ta.value.length);
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+            document.body.removeChild(ta);
+            if(ok) onSuccess(); else showToast('<i class="fas fa-times"></i> تعذّر النسخ، انسخ الرابط يدوياً: ' + text, 'error');
+        }
+
+        // Fixed base URL that the section/subject/lesson ID is appended to when sharing a link
+        const SHARE_BASE_URL = 'https://selahalazhary.github.io/3/';
+        const SHARE_PARAM = 'section';
+        function buildShareLink(id) { return SHARE_BASE_URL + '?' + SHARE_PARAM + '=' + encodeURIComponent(id); }
+
+        window.copyId = (id) => {
+            if(!id) return;
+            const link = buildShareLink(id);
+            const done = () => showToast('<i class="fas fa-check"></i> تم نسخ الرابط: ' + link, 'success');
+            if(navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link).then(done).catch(() => fallbackCopy(link, done));
+            } else {
+                fallbackCopy(link, done);
+            }
+        };
+
+        // ========== Delete Gate: require secret password before any DB deletion ==========
+        let pwCallback = null;
+        function requireAdminPassword(message, onConfirm) {
+            pwCallback = onConfirm;
+            document.getElementById('pwModalMsg').textContent = message || 'أدخل الرقم السري لتأكيد الحذف';
+            const input = document.getElementById('pwModalInput');
+            input.value = '';
+            document.getElementById('pwModalError').style.display = 'none';
+            document.getElementById('pwModal').classList.add('active');
+            setTimeout(() => input.focus(), 50);
+        }
+        function closePwModal() {
+            document.getElementById('pwModal').classList.remove('active');
+            document.getElementById('pwModalInput').value = '';
+            pwCallback = null;
+        }
+        function submitPwModal() {
+            const val = document.getElementById('pwModalInput').value;
+            if(val && val === adminPass) {
+                const cb = pwCallback;
+                closePwModal();
+                if(typeof cb === 'function') cb();
+            } else {
+                document.getElementById('pwModalError').style.display = 'block';
+            }
+        }
+        document.getElementById('pwModalConfirm').onclick = submitPwModal;
+        document.getElementById('pwModalInput').onkeypress = (e) => { if(e.key === 'Enter') submitPwModal(); };
+        document.getElementById('pwModal').onclick = (e) => { if(e.target === document.getElementById('pwModal')) closePwModal(); };
+        document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && document.getElementById('pwModal').classList.contains('active')) closePwModal(); });
+
         function escapeHtml(str) {
             if(!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -1223,9 +1391,24 @@
         document.getElementById('qLesson').onchange = (e) => updateSublessonsByLesson(e.target.value);
 
         // Load Data from Firebase
-        function loadSections() { database.ref('sections').on('value', (snap) => { sections = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sections.push(s); }); updateFilterSections(); loadSectionsList(); if(document.getElementById('qYear').value) updateSectionsByYear(document.getElementById('qYear').value); }); }
-        function loadSubjects() { database.ref('subjects').on('value', (snap) => { subjects = []; snap.forEach(c => { let s = c.val(); s.id = c.key; subjects.push(s); }); updateFilterSubjects(); loadSubjectsList(); document.getElementById('subjectSection').innerHTML = '<option value="">اختر القسم</option>' + sections.map(s => `<option value="${s.id}">${s.name}</option>`).join(''); if(document.getElementById('qSection').value) updateSubjectsBySection(document.getElementById('qSection').value); }); }
-        function loadLessons() { database.ref('lessons').on('value', (snap) => { lessons = []; snap.forEach(c => { let l = c.val(); l.id = c.key; lessons.push(l); }); loadLessonsList(); document.getElementById('lessonSubject').innerHTML = '<option value="">اختر المادة</option>' + subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join(''); document.getElementById('sublessonLesson').innerHTML = '<option value="">اختر الدرس</option>' + lessons.map(l => `<option value="${l.id}">${l.name}</option>`).join(''); if(document.getElementById('qSubject').value) updateLessonsBySubject(document.getElementById('qSubject').value); }); }
+        // Rebuild the parent-selection dropdowns (Subjects→section, Lessons→subject, Sublessons→lesson)
+        // from the live globals, preserving any current selection, so adding a parent shows up immediately.
+        function refreshParentSelects() {
+            const fill = (id, items, placeholder) => {
+                const el = document.getElementById(id);
+                if(!el) return;
+                const prev = el.value;
+                el.innerHTML = `<option value="">${placeholder}</option>` + items.map(it => `<option value="${it.id}">${escapeHtml(it.name)}</option>`).join('');
+                if(prev && items.some(it => it.id === prev)) el.value = prev;
+            };
+            fill('subjectSection', sections, 'اختر القسم');
+            fill('lessonSubject', subjects, 'اختر المادة');
+            fill('sublessonLesson', lessons, 'اختر الدرس');
+        }
+
+        function loadSections() { database.ref('sections').on('value', (snap) => { sections = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sections.push(s); }); updateFilterSections(); loadSectionsList(); refreshParentSelects(); if(document.getElementById('qYear').value) updateSectionsByYear(document.getElementById('qYear').value); }); }
+        function loadSubjects() { database.ref('subjects').on('value', (snap) => { subjects = []; snap.forEach(c => { let s = c.val(); s.id = c.key; subjects.push(s); }); updateFilterSubjects(); loadSubjectsList(); refreshParentSelects(); if(document.getElementById('qSection').value) updateSubjectsBySection(document.getElementById('qSection').value); }); }
+        function loadLessons() { database.ref('lessons').on('value', (snap) => { lessons = []; snap.forEach(c => { let l = c.val(); l.id = c.key; lessons.push(l); }); loadLessonsList(); refreshParentSelects(); if(document.getElementById('qSubject').value) updateLessonsBySubject(document.getElementById('qSubject').value); }); }
         function loadSublessons() { database.ref('sublessons').on('value', (snap) => { sublessons = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sublessons.push(s); }); loadSublessonsList(); if(document.getElementById('qLesson').value) updateSublessonsByLesson(document.getElementById('qLesson').value); }); }
 
         // Save Question
@@ -1240,16 +1423,18 @@
             let data = { text, type, category: document.getElementById('qCategory').value, difficulty: document.getElementById('qDifficulty').value, year, section, subject: document.getElementById('qSubject').value || '', lesson: document.getElementById('qLesson').value || '', sublesson: document.getElementById('qSublesson').value || '', createdAt: new Date().toISOString() };
             if(type === 'mcq') {
                 let opts = ['opt1','opt2','opt3','opt4'].map(id => document.getElementById(id).value.trim());
-                opts.forEach((o,i) => { if(o) data[`option${i+1}`] = o; });
+                if(opts.filter(o => o).length < 2) { alert('أدخل خيارين على الأقل'); return; }
                 let correct = document.querySelector('input[name="correctOpt"]:checked')?.value;
                 if(!correct) { alert('حدد الإجابة الصحيحة'); return; }
+                if(!opts[parseInt(correct, 10) - 1]) { alert('الإجابة الصحيحة تشير إلى خيار فارغ، اكتب نص هذا الخيار'); return; }
+                opts.forEach((o,i) => { if(o) data[`option${i+1}`] = o; });
                 data.correctAnswer = correct;
             } else {
                 let correct = document.querySelector('input[name="tfCorrect"]:checked')?.value;
                 if(!correct) { alert('حدد الإجابة الصحيحة'); return; }
                 data.correctAnswer = correct;
             }
-            database.ref('questions').push(data).then(() => { alert('تمت الإضافة'); clearQuestionForm(); loadFilteredQuestions(); updateStats(); createBackup(); });
+            database.ref('questions').push(data).then(() => { showToast('<i class="fas fa-check"></i> تمت إضافة السؤال بنجاح', 'success'); clearQuestionForm(); loadFilteredQuestions(); updateStats(); createBackup(); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
         
         function clearQuestionForm() {
@@ -1261,7 +1446,7 @@
             document.querySelectorAll('input[name="tfCorrect"]').forEach(r => r.checked = false);
         }
 
-        window.deleteQuestion = (id) => { if(confirm('حذف السؤال؟')) database.ref('questions/'+id).remove().then(()=>{ loadFilteredQuestions(); updateStats(); createBackup(); }); };
+        window.deleteQuestion = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا السؤال', () => database.ref('questions/'+id).remove().then(()=>{ loadFilteredQuestions(); updateStats(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف السؤال', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
         
         // Professional Edit Function
         window.openEditModal = (id) => {
@@ -1403,12 +1588,15 @@
                 updatedAt: new Date().toISOString()
             };
             if(type === 'mcq') {
-                updateData.option1 = document.getElementById('editOpt1').value.trim();
-                updateData.option2 = document.getElementById('editOpt2').value.trim();
-                updateData.option3 = document.getElementById('editOpt3').value.trim();
-                updateData.option4 = document.getElementById('editOpt4').value.trim();
+                let eopts = ['editOpt1','editOpt2','editOpt3','editOpt4'].map(id => document.getElementById(id).value.trim());
+                if(eopts.filter(o => o).length < 2) { alert('أدخل خيارين على الأقل'); return; }
                 let correct = document.querySelector('input[name="editCorrectOpt"]:checked')?.value;
                 if(!correct) { alert('حدد الإجابة الصحيحة'); return; }
+                if(!eopts[parseInt(correct, 10) - 1]) { alert('الإجابة الصحيحة تشير إلى خيار فارغ، اكتب نص هذا الخيار'); return; }
+                updateData.option1 = eopts[0];
+                updateData.option2 = eopts[1];
+                updateData.option3 = eopts[2];
+                updateData.option4 = eopts[3];
                 updateData.correctAnswer = correct;
             } else {
                 let correct = document.querySelector('input[name="editTfCorrect"]:checked')?.value;
@@ -1416,12 +1604,12 @@
                 updateData.correctAnswer = correct;
             }
             database.ref('questions/'+currentEditId).update(updateData).then(() => {
-                alert('تم تعديل السؤال بنجاح');
+                showToast('<i class="fas fa-check"></i> تم تعديل السؤال بنجاح', 'success');
                 closeEditModal();
                 loadFilteredQuestions();
                 updateStats();
                 createBackup();
-            }).catch(err => alert('خطأ: '+err.message));
+            }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
         
         document.addEventListener('keydown', (e) => {
@@ -1439,11 +1627,91 @@
             if(!name) { alert('أدخل اسم القسم'); return; }
             let grades = Array.from(document.querySelectorAll('input[name="sectionGrades"]:checked')).map(cb=>cb.value);
             if(!grades.length) { alert('اختر صفاً'); return; }
-            database.ref('sections').push({ name, description: document.getElementById('sectionDesc').value, icon: document.getElementById('sectionIcon').value, grades }).then(()=>{ document.getElementById('sectionName').value = ''; document.getElementById('sectionDesc').value = ''; document.querySelectorAll('input[name="sectionGrades"]').forEach(c=>c.checked=false); createBackup(); });
+            database.ref('sections').push({ name, description: document.getElementById('sectionDesc').value, icon: document.getElementById('sectionIcon').value, grades }).then(()=>{ document.getElementById('sectionName').value = ''; document.getElementById('sectionDesc').value = ''; document.querySelectorAll('input[name="sectionGrades"]').forEach(c=>c.checked=false); createBackup(); showToast('<i class="fas fa-check"></i> تمت إضافة القسم', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
-        function loadSectionsList() { database.ref('sections').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; html += `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${s.grades?.map(g=>getYearText(g)).join(', ')}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSection('${s.id}','${escapeHtml(s.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSection('${s.id}')">حذف</button></div></div>`; }); document.getElementById('sectionsList').innerHTML = html || '<div>لا توجد أقسام</div>'; }); }
-        window.deleteSection = (id) => { if(confirm('حذف القسم؟')) database.ref('sections/'+id).remove().then(()=>{ loadSectionsList(); createBackup(); }); };
-        window.editSection = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('sections/'+id).update({ name: newName.trim() }).then(()=>{ loadSectionsList(); createBackup(); }); };
+        function matchesTerm(item, term) {
+            if(!term) return true;
+            return (item.name && item.name.toLowerCase().includes(term)) || (item.description && item.description.toLowerCase().includes(term));
+        }
+        function loadSectionsList() {
+            const term = (document.getElementById('searchSections')?.value || '').trim().toLowerCase();
+            const items = sections.filter(s => matchesTerm(s, term));
+            const html = items.map(s => `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${(s.grades||[]).map(g=>getYearText(g)).join(', ')}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-sm" onclick="openTaxEdit('section','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSection('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`).join('');
+            document.getElementById('sectionsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد أقسام'}</div>`;
+        }
+        window.deleteSection = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا القسم', () => database.ref('sections/'+id).remove().then(()=>{ loadSectionsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف القسم', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
+        // ===== Full edit modal for taxonomy (sections / subjects / lessons / sublessons) =====
+        let taxEditType = null, taxEditId = null;
+        const TAX_CONFIG = {
+            section:   { ref: 'sections',   title: 'تعديل القسم',        list: () => loadSectionsList(),   arr: () => sections,   parent: null,                                                              grades: true,  order: false },
+            subject:   { ref: 'subjects',   title: 'تعديل المادة',       list: () => loadSubjectsList(),   arr: () => subjects,   parent: { label: 'القسم التابع', field: 'sectionId', items: () => sections }, grades: false, order: false },
+            lesson:    { ref: 'lessons',    title: 'تعديل الدرس',        list: () => loadLessonsList(),    arr: () => lessons,    parent: { label: 'المادة التابعة', field: 'subjectId', items: () => subjects }, grades: false, order: true  },
+            sublesson: { ref: 'sublessons', title: 'تعديل القسم الفرعي', list: () => loadSublessonsList(),  arr: () => sublessons, parent: { label: 'الدرس التابع', field: 'lessonId', items: () => lessons },   grades: false, order: true  }
+        };
+
+        window.openTaxEdit = (type, id) => {
+            const cfg = TAX_CONFIG[type];
+            if(!cfg) return;
+            const item = cfg.arr().find(x => x.id === id);
+            if(!item) { showToast('<i class="fas fa-times"></i> العنصر غير موجود', 'error'); return; }
+            taxEditType = type; taxEditId = id;
+            document.getElementById('taxEditTitle').textContent = cfg.title;
+            document.getElementById('taxEditName').value = item.name || '';
+            document.getElementById('taxEditDesc').value = item.description || '';
+            document.getElementById('taxEditIcon').value = item.icon || '';
+            // parent dropdown
+            const parentGroup = document.getElementById('taxEditParentGroup');
+            if(cfg.parent) {
+                parentGroup.style.display = 'block';
+                document.getElementById('taxEditParentLabel').textContent = cfg.parent.label;
+                const sel = document.getElementById('taxEditParent');
+                sel.innerHTML = '<option value="">-- اختر --</option>' + cfg.parent.items().map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+                sel.value = item[cfg.parent.field] || '';
+            } else { parentGroup.style.display = 'none'; }
+            // order
+            document.getElementById('taxEditOrderGroup').style.display = cfg.order ? 'block' : 'none';
+            if(cfg.order) document.getElementById('taxEditOrder').value = item.order || 1;
+            // grades
+            document.getElementById('taxEditGradesGroup').style.display = cfg.grades ? 'block' : 'none';
+            if(cfg.grades) {
+                const grades = item.grades || [];
+                document.querySelectorAll('.taxEditGrade').forEach(cb => { cb.checked = grades.includes(cb.value); });
+            }
+            document.getElementById('taxEditModal').classList.add('active');
+        };
+
+        function closeTaxEdit() {
+            document.getElementById('taxEditModal').classList.remove('active');
+            taxEditType = null; taxEditId = null;
+        }
+
+        document.getElementById('taxEditSaveBtn').onclick = () => {
+            const type = taxEditType, id = taxEditId, cfg = TAX_CONFIG[type];
+            if(!cfg || !id) return;
+            const name = document.getElementById('taxEditName').value.trim();
+            if(!name) { alert('أدخل الاسم'); return; }
+            const data = { name: name, description: document.getElementById('taxEditDesc').value.trim(), icon: document.getElementById('taxEditIcon').value.trim() };
+            if(cfg.parent) {
+                const pv = document.getElementById('taxEditParent').value;
+                if(!pv) { alert('اختر ' + cfg.parent.label); return; }
+                data[cfg.parent.field] = pv;
+            }
+            if(cfg.order) data.order = parseInt(document.getElementById('taxEditOrder').value, 10) || 1;
+            if(cfg.grades) {
+                const grades = Array.from(document.querySelectorAll('.taxEditGrade:checked')).map(cb => cb.value);
+                if(!grades.length) { alert('اختر صفاً واحداً على الأقل'); return; }
+                data.grades = grades;
+            }
+            database.ref(cfg.ref + '/' + id).update(data).then(() => {
+                closeTaxEdit();
+                cfg.list();
+                createBackup();
+                showToast('<i class="fas fa-check"></i> تم حفظ التعديلات', 'success');
+            }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
+        };
+
+        document.getElementById('taxEditModal').onclick = (e) => { if(e.target === document.getElementById('taxEditModal')) closeTaxEdit(); };
+        document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && document.getElementById('taxEditModal').classList.contains('active')) closeTaxEdit(); });
 
         // Subjects CRUD
         document.getElementById('addSubjectBtn').onclick = () => {
@@ -1451,11 +1719,15 @@
             if(!name) { alert('أدخل اسم المادة'); return; }
             let section = document.getElementById('subjectSection').value;
             if(!section) { alert('اختر القسم'); return; }
-            database.ref('subjects').push({ name, description: document.getElementById('subjectDesc').value, sectionId: section, icon: document.getElementById('subjectIcon').value }).then(()=>{ document.getElementById('subjectName').value = ''; document.getElementById('subjectDesc').value = ''; createBackup(); });
+            database.ref('subjects').push({ name, description: document.getElementById('subjectDesc').value, sectionId: section, icon: document.getElementById('subjectIcon').value }).then(()=>{ document.getElementById('subjectName').value = ''; document.getElementById('subjectDesc').value = ''; createBackup(); showToast('<i class="fas fa-check"></i> تمت إضافة المادة', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
-        function loadSubjectsList() { database.ref('subjects').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; let secName = sections.find(sec=>sec.id===s.sectionId)?.name||''; html += `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(secName)}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSubject('${s.id}','${escapeHtml(s.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSubject('${s.id}')">حذف</button></div></div>`; }); document.getElementById('subjectsList').innerHTML = html || '<div>لا توجد مواد</div>'; }); }
-        window.deleteSubject = (id) => { if(confirm('حذف المادة؟')) database.ref('subjects/'+id).remove().then(()=>{ loadSubjectsList(); createBackup(); }); };
-        window.editSubject = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('subjects/'+id).update({ name: newName.trim() }).then(()=>{ loadSubjectsList(); createBackup(); }); };
+        function loadSubjectsList() {
+            const term = (document.getElementById('searchSubjects')?.value || '').trim().toLowerCase();
+            const items = subjects.filter(s => matchesTerm(s, term));
+            const html = items.map(s => { const secName = sections.find(sec => sec.id === s.sectionId)?.name || ''; return `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(secName)}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-sm" onclick="openTaxEdit('subject','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSubject('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`; }).join('');
+            document.getElementById('subjectsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد مواد'}</div>`;
+        }
+        window.deleteSubject = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذه المادة', () => database.ref('subjects/'+id).remove().then(()=>{ loadSubjectsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف المادة', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
 
         // Lessons CRUD
         document.getElementById('addLessonBtn').onclick = () => {
@@ -1463,11 +1735,15 @@
             if(!name) { alert('أدخل اسم الدرس'); return; }
             let subject = document.getElementById('lessonSubject').value;
             if(!subject) { alert('اختر المادة'); return; }
-            database.ref('lessons').push({ name, description: document.getElementById('lessonDesc').value, subjectId: subject, icon: document.getElementById('lessonIcon').value, order: parseInt(document.getElementById('lessonOrder').value)||1 }).then(()=>{ document.getElementById('lessonName').value = ''; document.getElementById('lessonDesc').value = ''; createBackup(); });
+            database.ref('lessons').push({ name, description: document.getElementById('lessonDesc').value, subjectId: subject, icon: document.getElementById('lessonIcon').value, order: parseInt(document.getElementById('lessonOrder').value)||1 }).then(()=>{ document.getElementById('lessonName').value = ''; document.getElementById('lessonDesc').value = ''; createBackup(); showToast('<i class="fas fa-check"></i> تمت إضافة الدرس', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
-        function loadLessonsList() { database.ref('lessons').once('value', (snap) => { let html = ''; snap.forEach(c => { let l = c.val(); l.id = c.key; let subName = subjects.find(s=>s.id===l.subjectId)?.name||''; html += `<div class="list-item"><div><strong>${escapeHtml(l.name)}</strong><div class="question-meta"><span>${escapeHtml(subName)}</span><span>ترتيب: ${l.order||1}</span></div><p>${escapeHtml(l.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editLesson('${l.id}','${escapeHtml(l.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteLesson('${l.id}')">حذف</button></div></div>`; }); document.getElementById('lessonsList').innerHTML = html || '<div>لا توجد دروس</div>'; }); }
-        window.deleteLesson = (id) => { if(confirm('حذف الدرس؟')) database.ref('lessons/'+id).remove().then(()=>{ loadLessonsList(); createBackup(); }); };
-        window.editLesson = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('lessons/'+id).update({ name: newName.trim() }).then(()=>{ loadLessonsList(); createBackup(); }); };
+        function loadLessonsList() {
+            const term = (document.getElementById('searchLessons')?.value || '').trim().toLowerCase();
+            const items = lessons.filter(l => matchesTerm(l, term));
+            const html = items.map(l => { const subName = subjects.find(s => s.id === l.subjectId)?.name || ''; return `<div class="list-item"><div><strong>${escapeHtml(l.name)}</strong><div class="question-meta"><span>${escapeHtml(subName)}</span><span>ترتيب: ${l.order||1}</span></div><p>${escapeHtml(l.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${l.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-sm" onclick="openTaxEdit('lesson','${l.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteLesson('${l.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`; }).join('');
+            document.getElementById('lessonsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد دروس'}</div>`;
+        }
+        window.deleteLesson = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا الدرس', () => database.ref('lessons/'+id).remove().then(()=>{ loadLessonsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف الدرس', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
 
         // Sublessons CRUD
         document.getElementById('addSublessonBtn').onclick = () => {
@@ -1475,20 +1751,25 @@
             if(!name) { alert('أدخل الاسم'); return; }
             let lesson = document.getElementById('sublessonLesson').value;
             if(!lesson) { alert('اختر الدرس'); return; }
-            database.ref('sublessons').push({ name, description: document.getElementById('sublessonDesc').value, lessonId: lesson, icon: document.getElementById('sublessonIcon').value, order: parseInt(document.getElementById('sublessonOrder').value)||1 }).then(()=>{ document.getElementById('sublessonName').value = ''; document.getElementById('sublessonDesc').value = ''; createBackup(); });
+            database.ref('sublessons').push({ name, description: document.getElementById('sublessonDesc').value, lessonId: lesson, icon: document.getElementById('sublessonIcon').value, order: parseInt(document.getElementById('sublessonOrder').value)||1 }).then(()=>{ document.getElementById('sublessonName').value = ''; document.getElementById('sublessonDesc').value = ''; createBackup(); showToast('<i class="fas fa-check"></i> تمت إضافة القسم الفرعي', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
-        function loadSublessonsList() { database.ref('sublessons').once('value', (snap) => { let html = ''; snap.forEach(c => { let s = c.val(); s.id = c.key; let lessonName = lessons.find(l=>l.id===s.lessonId)?.name||''; html += `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(lessonName)}</span><span>ترتيب: ${s.order||1}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-sm" onclick="editSublesson('${s.id}','${escapeHtml(s.name)}')">تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSublesson('${s.id}')">حذف</button></div></div>`; }); document.getElementById('sublessonsList').innerHTML = html || '<div>لا توجد أقسام فرعية</div>'; }); }
-        window.deleteSublesson = (id) => { if(confirm('حذف القسم الفرعي؟')) database.ref('sublessons/'+id).remove().then(()=>{ loadSublessonsList(); createBackup(); }); };
-        window.editSublesson = (id, oldName) => { let newName = prompt('الاسم الجديد:', oldName); if(newName && newName.trim()) database.ref('sublessons/'+id).update({ name: newName.trim() }).then(()=>{ loadSublessonsList(); createBackup(); }); };
+        function loadSublessonsList() {
+            const term = (document.getElementById('searchSublessons')?.value || '').trim().toLowerCase();
+            const items = sublessons.filter(s => matchesTerm(s, term));
+            const html = items.map(s => { const lessonName = lessons.find(l => l.id === s.lessonId)?.name || ''; return `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(lessonName)}</span><span>ترتيب: ${s.order||1}</span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-sm" onclick="openTaxEdit('sublesson','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSublesson('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`; }).join('');
+            document.getElementById('sublessonsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد أقسام فرعية'}</div>`;
+        }
+        window.deleteSublesson = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا القسم الفرعي', () => database.ref('sublessons/'+id).remove().then(()=>{ loadSublessonsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف القسم الفرعي', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
 
         // Settings
         document.getElementById('saveSettingsBtn').onclick = () => {
-            let time = parseInt(document.getElementById('examTime').value);
-            if(time<1) { alert('مدة صحيحة'); return; }
+            let time = parseInt(document.getElementById('examTime').value, 10);
+            if(!Number.isFinite(time) || time < 1) { showToast('<i class="fas fa-times"></i> أدخل مدة اختبار صحيحة (دقيقة واحدة على الأقل)', 'error'); return; }
             let newPass = document.getElementById('adminPassSetting').value;
             if(newPass) { adminPass = newPass; localStorage.setItem('adminPassword', newPass); }
             database.ref('examStatus').set({ active: document.getElementById('examActive').checked, time });
-            alert('تم حفظ الإعدادات');
+            document.getElementById('adminPassSetting').value = '';
+            showToast('<i class="fas fa-check"></i> تم حفظ الإعدادات', 'success');
             createBackup();
         };
 
@@ -1496,7 +1777,7 @@
         function loadResults() { database.ref('quizResults').once('value', (snap) => { let html = ''; let results = []; snap.forEach(c => results.push(c.val())); results.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,20).forEach(r => { html += `<div class="result-item"><div><strong>${escapeHtml(r.userName||'زائر')}</strong><div class="question-meta"><span>${r.percentage}%</span><span>${r.timeTaken||'00:00'}</span></div></div><div>${new Date(r.timestamp).toLocaleDateString('ar-SA')}</div></div>`; }); document.getElementById('resultsList').innerHTML = html || '<div>لا توجد نتائج</div>'; }); }
 
         // Ads
-        document.getElementById('saveAdBtn').onclick = () => { let title = document.getElementById('adTitle').value.trim(); if(!title) { alert('أدخل عنوان الإعلان'); return; } let ad = { title, description: document.getElementById('adDesc').value, url: document.getElementById('adUrl').value, status: document.getElementById('adStatus').value }; database.ref('ads').set(ad).then(()=>{ alert('تم حفظ الإعلان'); createBackup(); }); };
+        document.getElementById('saveAdBtn').onclick = () => { let title = document.getElementById('adTitle').value.trim(); if(!title) { alert('أدخل عنوان الإعلان'); return; } let ad = { title, description: document.getElementById('adDesc').value, url: document.getElementById('adUrl').value, status: document.getElementById('adStatus').value }; database.ref('ads').set(ad).then(()=>{ showToast('<i class="fas fa-check"></i> تم حفظ الإعلان', 'success'); createBackup(); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error')); };
         document.getElementById('adTitle').oninput = () => document.getElementById('previewTitle').innerText = document.getElementById('adTitle').value || 'عنوان الإعلان';
         document.getElementById('adDesc').oninput = () => document.getElementById('previewDesc').innerText = document.getElementById('adDesc').value || 'وصف الإعلان';
 
@@ -1505,9 +1786,110 @@
         document.getElementById('manualBackupBtn').onclick = createManualBackup;
         document.getElementById('restoreBackupBtn').onclick = restoreBackup;
 
-        function createBackup() { if(!autoBackup) return; let backup = { timestamp: new Date().toISOString(), sections, subjects, lessons, sublessons, appSettings: { adminPassword: adminPass, autoBackup } }; database.ref('questions').once('value', (qSnap) => { let qs = []; qSnap.forEach(c => { let q = c.val(); q.id = c.key; qs.push(q); }); backup.questions = qs; database.ref('ads').once('value', (aSnap) => { if(aSnap.exists()) backup.ad = aSnap.val(); localStorage.setItem('autoBackup', JSON.stringify(backup)); localStorage.setItem('lastBackup', new Date().toISOString()); document.getElementById('lastBackupInfo').innerHTML = new Date().toLocaleString('ar-SA'); }); }); }
-        function createManualBackup() { let statusDiv = document.getElementById('backupStatus'); statusDiv.style.display = 'block'; statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري...'; let backup = { timestamp: new Date().toISOString(), sections, subjects, lessons, sublessons, appSettings: { adminPassword: adminPass, autoBackup } }; database.ref('questions').once('value', (qSnap) => { let qs = []; qSnap.forEach(c => { let q = c.val(); q.id = c.key; qs.push(q); }); backup.questions = qs; database.ref('ads').once('value', (aSnap) => { if(aSnap.exists()) backup.ad = aSnap.val(); let dataStr = JSON.stringify(backup, null, 2); let link = document.createElement('a'); link.href = 'data:application/json;charset=utf-8,'+encodeURIComponent(dataStr); link.download = `backup-${new Date().toISOString().split('T')[0]}.json`; link.click(); statusDiv.className = 'backup-status success'; statusDiv.innerHTML = '<i class="fas fa-check"></i> تم إنشاء النسخة'; setTimeout(()=>{ statusDiv.style.display = 'none'; }, 3000); }); }); }
-        function restoreBackup() { let file = document.getElementById('backupFile').files[0]; if(!file) { alert('اختر ملف'); return; } if(!confirm('استعادة النسخة؟ سيتم استبدال البيانات')) return; let reader = new FileReader(); reader.onload = function(e) { try { let data = JSON.parse(e.target.result); if(data.sections) { let promises = []; promises.push(database.ref('sections').remove()); data.sections.forEach(s => { let id = s.id; let copy = {...s}; delete copy.id; promises.push(database.ref('sections/'+id).set(copy)); }); promises.push(database.ref('subjects').remove()); data.subjects?.forEach(s => { let id = s.id; let copy = {...s}; delete copy.id; promises.push(database.ref('subjects/'+id).set(copy)); }); promises.push(database.ref('lessons').remove()); data.lessons?.forEach(l => { let id = l.id; let copy = {...l}; delete copy.id; promises.push(database.ref('lessons/'+id).set(copy)); }); promises.push(database.ref('sublessons').remove()); data.sublessons?.forEach(s => { let id = s.id; let copy = {...s}; delete copy.id; promises.push(database.ref('sublessons/'+id).set(copy)); }); promises.push(database.ref('questions').remove()); data.questions?.forEach(q => { let id = q.id; let copy = {...q}; delete copy.id; promises.push(database.ref('questions/'+id).set(copy)); }); if(data.ad) promises.push(database.ref('ads').set(data.ad)); Promise.all(promises).then(() => { alert('تم الاستعادة! سيتم تحديث الصفحة'); setTimeout(()=> location.reload(), 2000); }); } else alert('ملف غير صالح'); } catch(err) { alert('خطأ في الملف'); } }; reader.readAsText(file); }
+        // Every top-level node in the database that must be included in a full backup
+        const BACKUP_NODES = ['questions', 'sections', 'subjects', 'lessons', 'sublessons', 'ads', 'examStatus', 'quizResults'];
+
+        // Read every node individually (works even if root read is restricted by security rules)
+        // and build one object holding the ENTIRE database, preserving the original Firebase keys.
+        function gatherFullBackup() {
+            return Promise.all(BACKUP_NODES.map(node =>
+                database.ref(node).once('value')
+                    .then(snap => [node, snap.exists() ? snap.val() : null])
+                    .catch(() => [node, null])
+            )).then(entries => {
+                const data = {};
+                entries.forEach(([node, val]) => { if(val !== null && val !== undefined) data[node] = val; });
+                return {
+                    __meta: { type: 'full-database-backup', version: 2, timestamp: new Date().toISOString(), nodes: Object.keys(data), adminPassword: adminPass },
+                    data: data
+                };
+            });
+        }
+
+        function createBackup() {
+            if(!autoBackup) return;
+            gatherFullBackup().then(backup => {
+                try { localStorage.setItem('autoBackupData', JSON.stringify(backup)); } catch(err) { /* storage quota exceeded — skip local copy */ }
+                localStorage.setItem('lastBackup', backup.__meta.timestamp);
+                const info = document.getElementById('lastBackupInfo');
+                if(info) info.innerHTML = new Date(backup.__meta.timestamp).toLocaleString('ar-SA');
+            }).catch(() => { /* auto backup is best-effort */ });
+        }
+        function createManualBackup() {
+            let statusDiv = document.getElementById('backupStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'backup-status';
+            statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء نسخة كاملة من قاعدة البيانات...';
+            gatherFullBackup().then(backup => {
+                let dataStr = JSON.stringify(backup, null, 2);
+                let blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+                let url = URL.createObjectURL(blob);
+                let link = document.createElement('a');
+                link.href = url;
+                link.download = `selah-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                localStorage.setItem('lastBackup', backup.__meta.timestamp);
+                document.getElementById('lastBackupInfo').innerHTML = new Date(backup.__meta.timestamp).toLocaleString('ar-SA');
+                let summary = backup.__meta.nodes.length ? (' (' + backup.__meta.nodes.join('، ') + ')') : '';
+                statusDiv.className = 'backup-status success';
+                statusDiv.innerHTML = '<i class="fas fa-check"></i> تم إنشاء نسخة كاملة' + summary;
+                showToast('<i class="fas fa-check"></i> تم تنزيل نسخة كاملة من قاعدة البيانات', 'success');
+                setTimeout(() => { statusDiv.style.display = 'none'; }, 5000);
+            }).catch(err => {
+                statusDiv.className = 'backup-status error';
+                statusDiv.innerHTML = '<i class="fas fa-times"></i> فشل إنشاء النسخة: ' + err.message;
+            });
+        }
+        function restoreBackup() {
+            let file = document.getElementById('backupFile').files[0];
+            if(!file) { alert('اختر ملف'); return; }
+            requireAdminPassword('أدخل الرقم السري لاستعادة النسخة (سيتم حذف واستبدال كل البيانات الحالية)', function(){
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let data;
+                    try { data = JSON.parse(e.target.result); } catch(err) { showToast('<i class="fas fa-times"></i> ملف غير صالح', 'error'); return; }
+                    let statusDiv = document.getElementById('backupStatus');
+                    statusDiv.style.display = 'block';
+                    statusDiv.className = 'backup-status';
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري استعادة قاعدة البيانات...';
+                    let promises = [];
+                    if(data && data.data && typeof data.data === 'object') {
+                        // New full-database format (v2): each node exactly mirrors the backup
+                        const nodes = new Set([...BACKUP_NODES, ...Object.keys(data.data)]);
+                        nodes.forEach(node => {
+                            let val = data.data[node];
+                            promises.push(database.ref(node).set(val !== undefined ? val : null));
+                        });
+                    } else if(data && data.sections) {
+                        // Legacy format (arrays with .id) — kept for backward compatibility
+                        const rebuild = (arr) => { let obj = {}; (arr || []).forEach(it => { let id = it.id; let copy = {...it}; delete copy.id; obj[id] = copy; }); return obj; };
+                        promises.push(database.ref('sections').set(rebuild(data.sections)));
+                        promises.push(database.ref('subjects').set(rebuild(data.subjects)));
+                        promises.push(database.ref('lessons').set(rebuild(data.lessons)));
+                        promises.push(database.ref('sublessons').set(rebuild(data.sublessons)));
+                        promises.push(database.ref('questions').set(rebuild(data.questions)));
+                        if(data.ad) promises.push(database.ref('ads').set(data.ad));
+                    } else {
+                        statusDiv.style.display = 'none';
+                        showToast('<i class="fas fa-times"></i> ملف النسخة غير صالح', 'error');
+                        return;
+                    }
+                    Promise.all(promises).then(() => {
+                        statusDiv.className = 'backup-status success';
+                        statusDiv.innerHTML = '<i class="fas fa-check"></i> تمت الاستعادة بالكامل! سيتم تحديث الصفحة';
+                        showToast('<i class="fas fa-check"></i> تمت استعادة قاعدة البيانات بالكامل', 'success');
+                        setTimeout(() => location.reload(), 1800);
+                    }).catch(err => {
+                        statusDiv.className = 'backup-status error';
+                        statusDiv.innerHTML = '<i class="fas fa-times"></i> فشلت الاستعادة: ' + err.message;
+                    });
+                };
+                reader.readAsText(file);
+            });
+        }
 
         function updateStats() { database.ref('questions').once('value', (s) => { document.getElementById('totalQuestions').innerText = s.numChildren(); }); database.ref('quizResults').once('value', (s) => { document.getElementById('totalQuizzes').innerText = s.numChildren(); let total=0, count=0; s.forEach(c => { total += c.val().percentage||0; count++; }); document.getElementById('avgScore').innerText = count?Math.round(total/count)+'%':'0%'; }); database.ref('sections').once('value', (s) => { document.getElementById('totalSections').innerText = s.numChildren(); }); }
 
