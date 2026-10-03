@@ -1030,6 +1030,126 @@
             body { padding: 14px; }
             .stat-number { font-size: 32px; }
         }
+
+        /* ================================================================
+           تصميم موحّد مع لوحة تحكم المرحلة الإعدادية (Ser123E)
+           تغيير في الشكل فقط — بدون أي تغيير في البنية أو البيانات
+           ================================================================ */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --primary-light: #e0e7ff;
+            --brand-grad: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-danger: linear-gradient(135deg, #f72585 0%, #b5179e 100%);
+            --admin-bg: #eef1f8;
+            --admin-nav-bg: #ffffff;
+            --admin-border: rgba(15, 23, 42, 0.08);
+            --admin-ring: rgba(67, 97, 238, 0.12);
+            --ring: 0 0 0 4px rgba(67, 97, 238, 0.18);
+        }
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --brand-grad: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --admin-bg: #0b1120;
+            --admin-nav-bg: #111c33;
+            --admin-border: rgba(148, 163, 184, 0.16);
+            --admin-ring: rgba(99, 102, 241, 0.22);
+        }
+
+        body, [data-theme="dark"] body { padding: 0; background: var(--admin-bg); background-attachment: scroll; }
+
+        /* ---- شاشة الدخول ---- */
+        .login-screen, [data-theme="dark"] .login-screen { background: var(--brand-grad); }
+        .login-card h2, .login-btn { background: var(--brand-grad); }
+        .login-card h2 { -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .login-input:focus { border-color: var(--primary); box-shadow: var(--ring); }
+
+        /* ---- الإطار العام والشريط العلوي ---- */
+        .dashboard { max-width: none; margin: 0; }
+        .top-header, [data-theme="dark"] .top-header {
+            position: sticky; top: 0; z-index: 50;
+            margin: 0; border-radius: 0; border: none;
+            padding: 16px 26px;
+            background: var(--brand-grad);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(15, 23, 42, 0.16);
+            backdrop-filter: none;
+        }
+        .logo-area h1 { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: #fff; font-size: 1.15rem; font-weight: 800; letter-spacing: 0; }
+        .logo-area img { height: 46px; padding: 5px; border-radius: 14px; background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.25); filter: none; }
+        .theme-toggle, .logout-btn {
+            width: 42px; height: 42px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.12); color: #fff; font-size: 17px;
+        }
+        .theme-toggle:hover, .logout-btn:hover { background: rgba(255, 255, 255, 0.28); color: #fff; box-shadow: none; transform: translateY(-2px); }
+        .logout-btn:hover { background: rgba(247, 37, 133, 0.75); transform: none; }
+
+        /* ---- بطاقات الإحصائيات ---- */
+        .stats-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; padding: 26px 26px 0; margin-bottom: 0; }
+        .stat-card { position: relative; overflow: hidden; border-radius: 18px; padding: 20px; border: 1px solid var(--admin-border); box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04); }
+        .stat-card::after { content: ''; position: absolute; inset-inline-end: -30px; top: -30px; width: 90px; height: 90px; border-radius: 50%; background: var(--brand-grad); opacity: 0.08; pointer-events: none; }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09); }
+        .stat-number { font-size: 32px; letter-spacing: 0; }
+        .stat-icon { width: 52px; height: 52px; border-radius: 16px; font-size: 22px; box-shadow: none; }
+
+        /* ---- القائمة الجانبية + المحتوى ---- */
+        .admin-tabs, [data-theme="dark"] .admin-tabs {
+            display: grid; grid-template-columns: 250px minmax(0, 1fr); align-items: start;
+            margin: 26px 0 0; border: none; border-radius: 0; box-shadow: none; overflow: visible; background: transparent;
+        }
+        .tabs-header {
+            position: sticky; top: 76px;
+            flex-direction: column; flex-wrap: nowrap; gap: 5px; padding: 16px 12px;
+            background: var(--admin-nav-bg); border: none; border-inline-start: 1px solid var(--admin-border);
+            min-height: calc(100vh - 76px); max-height: calc(100vh - 76px); overflow-y: auto;
+        }
+        .tab-btn { width: 100%; justify-content: flex-start; gap: 12px; padding: 10px 12px; border-radius: 14px; font-size: 14.5px; font-weight: 700; color: var(--gray-700); border: 1px solid transparent; text-align: start; }
+        .tab-btn i { width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 19px; background: rgba(67, 97, 238, 0.09); color: var(--primary); transition: var(--transition); }
+        [data-theme="dark"] .tab-btn i { background: rgba(99, 102, 241, 0.18); }
+        .tab-btn:hover { background: var(--gray-50); border-color: var(--admin-border); color: var(--gray-800); transform: translateX(-4px); }
+        .tab-btn.active { background: var(--brand-grad); color: #fff; box-shadow: 0 12px 26px var(--admin-ring); transform: none; }
+        .tab-btn.active i { background: rgba(255, 255, 255, 0.24); color: #fff; transform: scale(1.05); }
+
+        .tab-content { padding: 0 26px 26px; max-width: 1230px; margin: 0 auto; width: 100%; }
+        .tab-content.active { display: block; }
+
+        /* ---- البطاقات والنماذج ---- */
+        .form-grid { gap: 22px; }
+        .form-section { background: var(--card-bg); border: 1px solid var(--admin-border); border-radius: 20px; padding: 24px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04); }
+        .form-section:hover { box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07); }
+        .form-section h3 { font-size: 1.08rem; font-weight: 800; padding-bottom: 14px; margin-bottom: 18px; border-bottom: 1px solid var(--admin-border); }
+        .form-section h3::before { display: none; }
+        .form-section h3 i { color: var(--primary); }
+        .form-section h3, .form-section h3 { padding-inline-start: 0; }
+        .form-group label { font-size: 14px; color: var(--gray-500); }
+        .form-control { border-radius: 12px; border: 1px solid var(--admin-border); background: var(--gray-50); }
+        .form-control:focus { border-color: var(--primary); box-shadow: var(--ring); }
+
+        /* ---- الأزرار ---- */
+        .btn-primary { background: var(--brand-grad); border-radius: 16px; box-shadow: none; padding: 12px 24px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 22px var(--admin-ring); }
+        .btn-sm { border-radius: 12px; padding: 8px 15px; }
+        .btn-danger { background: var(--gradient-danger); box-shadow: none; }
+
+        /* ---- القوائم ---- */
+        .question-item, .list-item { border-radius: 16px; border: 1px solid var(--admin-border); padding: 18px 20px; background: var(--card-bg); }
+        .question-item:hover, .list-item:hover { transform: translateY(-2px); border-color: rgba(67, 97, 238, 0.35); box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08); }
+        .question-meta span { background: var(--gray-50); border: 1px solid var(--admin-border); font-size: 12.5px; font-weight: 600; }
+        .edit-modal-header { background: var(--brand-grad); }
+
+        /* ---- الشاشات الصغيرة: القائمة تتحول إلى شريط أفقي ---- */
+        @media (max-width: 900px) {
+            .admin-tabs, [data-theme="dark"] .admin-tabs { display: block; margin-top: 18px; }
+            .tabs-header { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; min-height: 0; max-height: none; padding: 10px 12px; margin: 0 0 18px; border-inline-start: none; border-bottom: 1px solid var(--admin-border); }
+            .tab-btn { width: auto; white-space: nowrap; flex-shrink: 0; padding: 8px 12px; }
+            .tab-btn i { width: 34px; height: 34px; font-size: 16px; }
+            .tab-btn:hover { transform: none; }
+            .stats-grid { padding: 18px 14px 0; }
+            .tab-content { padding: 0 14px 20px; }
+            .top-header, [data-theme="dark"] .top-header { padding: 12px 14px; }
+        }
     </style>
 </head>
 <body>
@@ -1075,6 +1195,7 @@
                 <button class="tab-btn" data-tab="results"><i class="fas fa-chart-bar"></i> النتائج</button>
                 <button class="tab-btn" data-tab="ads"><i class="fas fa-ad"></i> الإعلانات</button>
                 <button class="tab-btn" data-tab="backup"><i class="fas fa-database"></i> النسخ الاحتياطي</button>
+                <button class="tab-btn" data-tab="trash"><i class="fas fa-trash-restore"></i> سلة المحذوفات</button>
             </div>
 
             <!-- إضافة سؤال -->
@@ -1138,7 +1259,7 @@
             <!-- الأقسام -->
             <div class="tab-content" id="sections">
                 <div class="form-grid">
-                    <div class="form-section"><h3><i class="fas fa-plus-circle"></i> إضافة قسم جديد</h3><div class="form-group"><label>اسم القسم</label><input type="text" id="sectionName" class="form-control"></div><div class="form-group"><label>وصف القسم</label><textarea id="sectionDesc" class="form-control"></textarea></div><div class="form-group"><label>أيقونة القسم</label><select id="sectionIcon" class="form-control"><option value="fas fa-book">كتاب</option><option value="fas fa-flask">علوم</option><option value="fas fa-calculator">رياضيات</option></select></div><div class="form-group"><label>الصفوف المرتبطة</label><div class="grades-group"><label><input type="checkbox" name="sectionGrades" value="secondary1"> أول ثانوي</label><label><input type="checkbox" name="sectionGrades" value="secondary2"> ثاني ثانوي</label><label><input type="checkbox" name="sectionGrades" value="secondary3"> ثالث ثانوي</label></div></div><button class="btn-primary" id="addSectionBtn"><i class="fas fa-plus"></i> إضافة القسم</button></div>
+                    <div class="form-section"><h3><i class="fas fa-plus-circle"></i> إضافة قسم جديد</h3><div class="form-group"><label>اسم القسم</label><input type="text" id="sectionName" class="form-control"></div><div class="form-group"><label>وصف القسم</label><textarea id="sectionDesc" class="form-control"></textarea></div><div class="form-group"><label>أيقونة القسم</label><select id="sectionIcon" class="form-control"><option value="fas fa-book">كتاب</option><option value="fas fa-flask">علوم</option><option value="fas fa-calculator">رياضيات</option></select></div><div class="form-group"><label>الصفوف المرتبطة</label><div class="grades-group"><label><input type="checkbox" name="sectionGrades" value="secondary1"> أول ثانوي</label><label><input type="checkbox" name="sectionGrades" value="secondary2"> ثاني ثانوي</label><label><input type="checkbox" name="sectionGrades" value="secondary3"> ثالث ثانوي</label></div></div><div class="form-group"><label>الترتيب (رقم)</label><input type="number" id="sectionOrder" class="form-control" min="1" placeholder="اتركه فارغاً ليُضاف في النهاية"></div><button class="btn-primary" id="addSectionBtn"><i class="fas fa-plus"></i> إضافة القسم</button></div>
                     <div class="form-section"><h3><i class="fas fa-list"></i> الأقسام الحالية</h3><input type="text" id="searchSections" class="form-control" placeholder="🔍 ابحث في الأقسام..." oninput="loadSectionsList()" style="margin-bottom:16px"><div class="items-list" id="sectionsList"></div></div>
                 </div>
             </div>
@@ -1188,6 +1309,15 @@
             </div>
 
             <!-- النسخ الاحتياطي -->
+            <!-- سلة المحذوفات -->
+            <div class="tab-content" id="trash">
+                <div class="form-section"><h3><i class="fas fa-trash-restore"></i> سلة المحذوفات</h3>
+                    <p style="color:var(--gray-500);margin-bottom:16px">أي عنصر تحذفه يُنقل هنا أولاً، ويمكنك استرجاعه بنفس بياناته.</p>
+                    <div class="filter-bar"><select id="trashFilter" class="form-control" onchange="loadTrashList()"><option value="">كل الأنواع</option><option value="questions">الأسئلة</option><option value="sections">الأقسام</option><option value="subjects">المواد</option><option value="lessons">الدروس</option><option value="sublessons">الأقسام الفرعية</option></select></div>
+                    <div class="items-list" id="trashList"></div>
+                </div>
+            </div>
+
             <div class="tab-content" id="backup">
                 <div class="form-grid">
                     <div class="form-section"><h3><i class="fas fa-database"></i> النسخ الاحتياطي</h3><div class="form-group"><label><input type="checkbox" id="autoBackupCheck" checked> تفعيل النسخ التلقائي</label></div><div class="form-group"><button class="btn-primary" id="manualBackupBtn"><i class="fas fa-download"></i> إنشاء نسخة يدوية</button><div id="backupStatus" class="backup-status"></div></div><div class="form-group"><label>استعادة نسخة</label><input type="file" id="backupFile" class="form-control" accept=".json"><button class="btn-primary btn-warning" id="restoreBackupBtn" style="margin-top:12px"><i class="fas fa-upload"></i> استعادة النسخة</button></div><div class="form-group"><label>آخر نسخة</label><div id="lastBackupInfo">لا توجد نسخة</div></div></div>
@@ -1715,7 +1845,7 @@
             fill('sublessonLesson', lessons, 'اختر الدرس');
         }
 
-        function loadSections() { database.ref('sections').on('value', (snap) => { sections = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sections.push(s); }); updateFilterSections(); loadSectionsList(); refreshParentSelects(); if(document.getElementById('qYear').value) updateSectionsByYear(document.getElementById('qYear').value); }); }
+        function loadSections() { database.ref('sections').on('value', (snap) => { sections = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sections.push(s); }); sections.sort((a, b) => (parseInt(a.order, 10) || 9999) - (parseInt(b.order, 10) || 9999)); updateFilterSections(); loadSectionsList(); refreshParentSelects(); if(document.getElementById('qYear').value) updateSectionsByYear(document.getElementById('qYear').value); }); }
         function loadSubjects() { database.ref('subjects').on('value', (snap) => { subjects = []; snap.forEach(c => { let s = c.val(); s.id = c.key; subjects.push(s); }); updateFilterSubjects(); loadSubjectsList(); refreshParentSelects(); if(document.getElementById('qSection').value) updateSubjectsBySection(document.getElementById('qSection').value); }); }
         function loadLessons() { database.ref('lessons').on('value', (snap) => { lessons = []; snap.forEach(c => { let l = c.val(); l.id = c.key; lessons.push(l); }); loadLessonsList(); refreshParentSelects(); if(document.getElementById('qSubject').value) updateLessonsBySubject(document.getElementById('qSubject').value); }); }
         function loadSublessons() { database.ref('sublessons').on('value', (snap) => { sublessons = []; snap.forEach(c => { let s = c.val(); s.id = c.key; sublessons.push(s); }); loadSublessonsList(); if(document.getElementById('qLesson').value) updateSublessonsByLesson(document.getElementById('qLesson').value); }); }
@@ -1755,7 +1885,7 @@
             document.querySelectorAll('input[name="tfCorrect"]').forEach(r => r.checked = false);
         }
 
-        window.deleteQuestion = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا السؤال', () => database.ref('questions/'+id).remove().then(()=>{ loadFilteredQuestions(); updateStats(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف السؤال', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
+        window.deleteQuestion = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا السؤال', () => moveToTrash('questions', id).then(()=>{ loadFilteredQuestions(); updateStats(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف السؤال', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
         
         // Professional Edit Function
         window.openEditModal = (id) => {
@@ -1930,13 +2060,62 @@
         
         function getYearText(y) { if(y==='secondary1') return 'أول ثانوي'; if(y==='secondary2') return 'ثاني ثانوي'; if(y==='secondary3') return 'ثالث ثانوي'; return y; }
 
+
+        // ===== سلة المحذوفات: الحذف ينقل العنصر إلى trash بدلاً من مسحه نهائياً =====
+        const TRASH_LABELS = { questions: 'سؤال', sections: 'قسم', subjects: 'مادة', lessons: 'درس', sublessons: 'قسم فرعي' };
+        function moveToTrash(node, id) {
+            return database.ref(node + '/' + id).once('value').then(snap => {
+                if(!snap.exists()) return null;
+                return database.ref('trash/' + node + '/' + id).set({ data: snap.val(), deletedAt: firebase.database.ServerValue.TIMESTAMP })
+                    .then(() => database.ref(node + '/' + id).remove());
+            });
+        }
+        window.setSectionOrder = (id, val) => {
+            const n = parseInt(val, 10);
+            database.ref('sections/' + id).update({ order: n > 0 ? n : null })
+                .then(() => { createBackup(); showToast('<i class="fas fa-check"></i> تم تحديث الترتيب', 'success'); })
+                .catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
+        };
+        let trashItems = [];
+        function loadTrash() {
+            database.ref('trash').on('value', (snap) => {
+                trashItems = [];
+                snap.forEach(typeSnap => { typeSnap.forEach(c => { trashItems.push({ node: typeSnap.key, id: c.key, data: (c.val() || {}).data || {}, deletedAt: (c.val() || {}).deletedAt || 0 }); }); });
+                trashItems.sort((a, b) => b.deletedAt - a.deletedAt);
+                loadTrashList();
+            });
+        }
+        function loadTrashList() {
+            const f = document.getElementById('trashFilter').value;
+            const items = trashItems.filter(t => !f || t.node === f);
+            const html = items.map(t => {
+                const title = t.data.name || t.data.text || t.data.question || '(بدون عنوان)';
+                const when = t.deletedAt ? new Date(t.deletedAt).toLocaleString('ar-EG') : '';
+                return `<div class="list-item"><div><strong>${escapeHtml(String(title).slice(0, 160))}</strong><div class="question-meta"><span>${TRASH_LABELS[t.node] || t.node}</span><span>${when}</span></div></div><div class="item-actions"><button class="btn-primary btn-sm" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="restoreTrash('${t.node}','${t.id}')"><i class="fas fa-undo"></i> استرجاع</button><button class="btn-primary btn-danger btn-sm" onclick="purgeTrash('${t.node}','${t.id}')"><i class="fas fa-times"></i> حذف نهائي</button></div></div>`;
+            }).join('');
+            document.getElementById('trashList').innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--gray-500)">السلة فارغة</div>';
+        }
+        window.restoreTrash = (node, id) => {
+            const t = trashItems.find(x => x.node === node && x.id === id);
+            if(!t) return;
+            database.ref(node + '/' + id).set(t.data)
+                .then(() => database.ref('trash/' + node + '/' + id).remove())
+                .then(() => { createBackup(); showToast('<i class="fas fa-check"></i> تم الاسترجاع', 'success'); })
+                .catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
+        };
+        window.purgeTrash = (node, id) => {
+            requireAdminPassword('أدخل الرقم السري للحذف النهائي', () => database.ref('trash/' + node + '/' + id).remove()
+                .then(() => showToast('<i class="fas fa-check"></i> تم الحذف النهائي', 'success'))
+                .catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error')));
+        };
+
         // Sections CRUD
         document.getElementById('addSectionBtn').onclick = () => {
             let name = document.getElementById('sectionName').value.trim();
             if(!name) { alert('أدخل اسم القسم'); return; }
             let grades = Array.from(document.querySelectorAll('input[name="sectionGrades"]:checked')).map(cb=>cb.value);
             if(!grades.length) { alert('اختر صفاً'); return; }
-            database.ref('sections').push({ name, description: document.getElementById('sectionDesc').value, icon: document.getElementById('sectionIcon').value, grades }).then(()=>{ document.getElementById('sectionName').value = ''; document.getElementById('sectionDesc').value = ''; document.querySelectorAll('input[name="sectionGrades"]').forEach(c=>c.checked=false); createBackup(); showToast('<i class="fas fa-check"></i> تمت إضافة القسم', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
+            database.ref('sections').push({ name, description: document.getElementById('sectionDesc').value, icon: document.getElementById('sectionIcon').value, grades, order: parseInt(document.getElementById('sectionOrder').value, 10) || (sections.reduce((m, x) => Math.max(m, parseInt(x.order, 10) || 0), 0) + 1) }).then(()=>{ document.getElementById('sectionOrder').value = ''; document.getElementById('sectionName').value = ''; document.getElementById('sectionDesc').value = ''; document.querySelectorAll('input[name="sectionGrades"]').forEach(c=>c.checked=false); createBackup(); showToast('<i class="fas fa-check"></i> تمت إضافة القسم', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'));
         };
         function matchesTerm(item, term) {
             if(!term) return true;
@@ -1956,14 +2135,14 @@
         function loadSectionsList() {
             const term = (document.getElementById('searchSections')?.value || '').trim().toLowerCase();
             const items = sections.filter(s => matchesTerm(s, term));
-            const html = items.map(s => `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${(s.grades||[]).map(g=>getYearText(g)).join(', ')}</span>${maintBadge(s)}</div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-qr btn-sm" onclick="showQR('${s.id}')"><i class="fas fa-qrcode"></i> QR</button>${maintBtn('section', s)}<button class="btn-primary btn-sm" onclick="openTaxEdit('section','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSection('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`).join('');
+            const html = items.map(s => `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${(s.grades||[]).map(g=>getYearText(g)).join(', ')}</span>${maintBadge(s)}<span><i class="fas fa-sort-numeric-up"></i> الترتيب: <input type="number" min="1" value="${s.order||''}" onchange="setSectionOrder('${s.id}', this.value)" style="width:64px;padding:2px 6px;border:1px solid var(--gray-300);border-radius:8px;background:var(--card-bg);color:var(--gray-800)"></span></div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-qr btn-sm" onclick="showQR('${s.id}')"><i class="fas fa-qrcode"></i> QR</button>${maintBtn('section', s)}<button class="btn-primary btn-sm" onclick="openTaxEdit('section','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSection('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`).join('');
             document.getElementById('sectionsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد أقسام'}</div>`;
         }
-        window.deleteSection = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا القسم', () => database.ref('sections/'+id).remove().then(()=>{ loadSectionsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف القسم', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
+        window.deleteSection = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا القسم', () => moveToTrash('sections', id).then(()=>{ loadSectionsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف القسم', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
         // ===== Full edit modal for taxonomy (sections / subjects / lessons / sublessons) =====
         let taxEditType = null, taxEditId = null;
         const TAX_CONFIG = {
-            section:   { ref: 'sections',   title: 'تعديل القسم',        list: () => loadSectionsList(),   arr: () => sections,   parent: null,                                                              grades: true,  order: false },
+            section:   { ref: 'sections',   title: 'تعديل القسم',        list: () => loadSectionsList(),   arr: () => sections,   parent: null,                                                              grades: true,  order: true  },
             subject:   { ref: 'subjects',   title: 'تعديل المادة',       list: () => loadSubjectsList(),   arr: () => subjects,   parent: { label: 'القسم التابع', field: 'sectionId', items: () => sections }, grades: false, order: false },
             lesson:    { ref: 'lessons',    title: 'تعديل الدرس',        list: () => loadLessonsList(),    arr: () => lessons,    parent: { label: 'المادة التابعة', field: 'subjectId', items: () => subjects }, grades: false, order: true  },
             sublesson: { ref: 'sublessons', title: 'تعديل القسم الفرعي', list: () => loadSublessonsList(),  arr: () => sublessons, parent: { label: 'الدرس التابع', field: 'lessonId', items: () => lessons },   grades: false, order: true  }
@@ -2084,7 +2263,7 @@
             const html = items.map(s => { const secName = sections.find(sec => sec.id === s.sectionId)?.name || ''; return `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(secName)}</span>${maintBadge(s)}</div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-qr btn-sm" onclick="showQR('${s.id}')"><i class="fas fa-qrcode"></i> QR</button>${maintBtn('subject', s)}<button class="btn-primary btn-sm" onclick="openTaxEdit('subject','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSubject('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`; }).join('');
             document.getElementById('subjectsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد مواد'}</div>`;
         }
-        window.deleteSubject = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذه المادة', () => database.ref('subjects/'+id).remove().then(()=>{ loadSubjectsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف المادة', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
+        window.deleteSubject = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذه المادة', () => moveToTrash('subjects', id).then(()=>{ loadSubjectsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف المادة', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
 
         // Lessons CRUD
         document.getElementById('addLessonBtn').onclick = () => {
@@ -2100,7 +2279,7 @@
             const html = items.map(l => { const subName = subjects.find(s => s.id === l.subjectId)?.name || ''; return `<div class="list-item"><div><strong>${escapeHtml(l.name)}</strong><div class="question-meta"><span>${escapeHtml(subName)}</span><span>ترتيب: ${l.order||1}</span>${maintBadge(l)}</div><p>${escapeHtml(l.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${l.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-qr btn-sm" onclick="showQR('${l.id}')"><i class="fas fa-qrcode"></i> QR</button>${maintBtn('lesson', l)}<button class="btn-primary btn-sm" onclick="openTaxEdit('lesson','${l.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteLesson('${l.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`; }).join('');
             document.getElementById('lessonsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد دروس'}</div>`;
         }
-        window.deleteLesson = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا الدرس', () => database.ref('lessons/'+id).remove().then(()=>{ loadLessonsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف الدرس', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
+        window.deleteLesson = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا الدرس', () => moveToTrash('lessons', id).then(()=>{ loadLessonsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف الدرس', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
 
         // Sublessons CRUD
         document.getElementById('addSublessonBtn').onclick = () => {
@@ -2116,7 +2295,7 @@
             const html = items.map(s => { const lessonName = lessons.find(l => l.id === s.lessonId)?.name || ''; return `<div class="list-item"><div><strong>${escapeHtml(s.name)}</strong><div class="question-meta"><span>${escapeHtml(lessonName)}</span><span>ترتيب: ${s.order||1}</span>${maintBadge(s)}</div><p>${escapeHtml(s.description||'')}</p></div><div class="item-actions"><button class="btn-primary btn-copy btn-sm" onclick="copyId('${s.id}')"><i class="fas fa-link"></i> نسخ الرابط</button><button class="btn-primary btn-qr btn-sm" onclick="showQR('${s.id}')"><i class="fas fa-qrcode"></i> QR</button>${maintBtn('sublesson', s)}<button class="btn-primary btn-sm" onclick="openTaxEdit('sublesson','${s.id}')"><i class="fas fa-edit"></i> تعديل</button><button class="btn-primary btn-danger btn-sm" onclick="deleteSublesson('${s.id}')"><i class="fas fa-trash"></i> حذف</button></div></div>`; }).join('');
             document.getElementById('sublessonsList').innerHTML = html || `<div style="text-align:center;padding:20px;color:var(--gray-500)">${term ? 'لا توجد نتائج مطابقة' : 'لا توجد أقسام فرعية'}</div>`;
         }
-        window.deleteSublesson = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا القسم الفرعي', () => database.ref('sublessons/'+id).remove().then(()=>{ loadSublessonsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف القسم الفرعي', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
+        window.deleteSublesson = (id) => { requireAdminPassword('أدخل الرقم السري لحذف هذا القسم الفرعي', () => moveToTrash('sublessons', id).then(()=>{ loadSublessonsList(); createBackup(); showToast('<i class="fas fa-check"></i> تم حذف القسم الفرعي', 'success'); }).catch(err => showToast('<i class="fas fa-times"></i> خطأ: ' + err.message, 'error'))); };
 
         // Settings
         document.getElementById('saveSettingsBtn').onclick = () => {
@@ -2252,7 +2431,7 @@
 
         function loadAd() { database.ref('ads').once('value', (snap) => { if(snap.exists()) { let ad = snap.val(); document.getElementById('adTitle').value = ad.title||''; document.getElementById('adDesc').value = ad.description||''; document.getElementById('adUrl').value = ad.url||''; document.getElementById('adStatus').value = ad.status||'active'; document.getElementById('previewTitle').innerText = ad.title||'عنوان الإعلان'; document.getElementById('previewDesc').innerText = ad.description||'وصف الإعلان'; } }); }
 
-        function initApp() { loadSections(); loadSubjects(); loadLessons(); loadSublessons(); loadAllQuestions(); updateStats(); loadResults(); loadAd(); let last = localStorage.getItem('lastBackup'); if(last) document.getElementById('lastBackupInfo').innerHTML = new Date(last).toLocaleString('ar-SA'); document.getElementById('autoBackupCheck').checked = autoBackup; }
+        function initApp() { loadTrash(); loadSections(); loadSubjects(); loadLessons(); loadSublessons(); loadAllQuestions(); updateStats(); loadResults(); loadAd(); let last = localStorage.getItem('lastBackup'); if(last) document.getElementById('lastBackupInfo').innerHTML = new Date(last).toLocaleString('ar-SA'); document.getElementById('autoBackupCheck').checked = autoBackup; }
     </script>
 </body>
 </html>
