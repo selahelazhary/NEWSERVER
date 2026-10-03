@@ -1253,6 +1253,7 @@
                     <select id="filterYear" class="form-control"><option value="">-- اختر الصف أولاً --</option><option value="secondary1">الأول الثانوي</option><option value="secondary2">الثاني الثانوي</option><option value="secondary3">الثالث الثانوي</option></select>
                     <select id="filterSection" class="form-control" disabled><option value="">اختر الصف أولاً</option></select>
                     <select id="filterSubject" class="form-control" disabled><option value="">اختر القسم أولاً</option></select>
+                    <select id="filterLesson" class="form-control" disabled><option value="">اختر المادة أولاً</option></select>
                 </div>
                 <div class="search-bar">
                     <input type="text" id="searchInput" class="form-control" placeholder="🔍 ابحث عن سؤال... (نص السؤال، التصنيف، الخيارات)">
@@ -1528,6 +1529,7 @@
                 sectionSelect.disabled = true;
                 document.getElementById('filterSubject').innerHTML = '<option value="">اختر القسم أولاً</option>';
                 document.getElementById('filterSubject').disabled = true;
+                resetFilterLesson();
                 return;
             }
             const filtered = sections.filter(s => s.grades && s.grades.includes(year));
@@ -1536,6 +1538,23 @@
             sectionSelect.disabled = false;
             document.getElementById('filterSubject').innerHTML = '<option value="">اختر القسم أولاً</option>';
             document.getElementById('filterSubject').disabled = true;
+            resetFilterLesson();
+        }
+
+        function resetFilterLesson() {
+            const lessonSelect = document.getElementById('filterLesson');
+            lessonSelect.innerHTML = '<option value="">اختر المادة أولاً</option>';
+            lessonSelect.disabled = true;
+        }
+
+        function updateFilterLessons() {
+            const subject = document.getElementById('filterSubject').value;
+            const lessonSelect = document.getElementById('filterLesson');
+            if(!subject) { resetFilterLesson(); return; }
+            const filtered = lessons.filter(l => l.subjectId === subject).sort((a, b) => (parseInt(a.order, 10) || 9999) - (parseInt(b.order, 10) || 9999));
+            lessonSelect.innerHTML = '<option value="">-- كل الدروس --</option>';
+            filtered.forEach(l => { const opt = document.createElement('option'); opt.value = l.id; opt.textContent = l.name; lessonSelect.appendChild(opt); });
+            lessonSelect.disabled = false;
         }
 
         function updateFilterSubjects() {
@@ -1545,17 +1564,20 @@
             if(!section || !year) { 
                 subjectSelect.innerHTML = '<option value="">اختر القسم أولاً</option>';
                 subjectSelect.disabled = true;
+                resetFilterLesson();
                 return;
             }
             const filtered = subjects.filter(s => s.sectionId === section);
             subjectSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
             filtered.forEach(s => { const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; subjectSelect.appendChild(opt); });
             subjectSelect.disabled = false;
+            resetFilterLesson();
         }
 
         document.getElementById('filterYear').onchange = () => { updateFilterSections(); loadFilteredQuestions(); };
         document.getElementById('filterSection').onchange = () => { updateFilterSubjects(); loadFilteredQuestions(); };
-        document.getElementById('filterSubject').onchange = () => loadFilteredQuestions();
+        document.getElementById('filterSubject').onchange = () => { updateFilterLessons(); loadFilteredQuestions(); };
+        document.getElementById('filterLesson').onchange = () => loadFilteredQuestions();
         document.getElementById('searchBtn').onclick = () => { currentSearchTerm = document.getElementById('searchInput').value.trim(); loadFilteredQuestions(); };
         document.getElementById('resetSearchBtn').onclick = () => { document.getElementById('searchInput').value = ''; currentSearchTerm = ''; loadFilteredQuestions(); };
         document.getElementById('searchInput').onkeypress = (e) => { if(e.key === 'Enter') { currentSearchTerm = document.getElementById('searchInput').value.trim(); loadFilteredQuestions(); } };
@@ -1578,6 +1600,7 @@
             const year = document.getElementById('filterYear').value;
             const section = document.getElementById('filterSection').value;
             const subject = document.getElementById('filterSubject').value;
+            const lesson = document.getElementById('filterLesson').value;
             
             const warningDiv = document.getElementById('warningMessage');
             const questionsContainer = document.getElementById('questionsList');
@@ -1596,6 +1619,7 @@
                 if(q.year !== year) return false;
                 if(q.section !== section) return false;
                 if(subject && q.subject !== subject) return false;
+                if(lesson && q.lesson !== lesson) return false;
                 return true;
             });
             
