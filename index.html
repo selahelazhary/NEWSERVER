@@ -1150,6 +1150,15 @@
             .tab-content { padding: 0 14px 20px; }
             .top-header, [data-theme="dark"] .top-header { padding: 12px 14px; }
         }
+
+        /* ---- معاينة خيارات السؤال مع تمييز الإجابة الصحيحة ---- */
+        .options-preview { display: grid; gap: 8px; margin: 14px 0; }
+        .opt-preview { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--admin-border); background: var(--gray-50); color: var(--gray-800); }
+        .opt-preview .opt-num { width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; background: var(--gray-200); color: var(--gray-600); }
+        .opt-preview .opt-txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+        .opt-preview.correct { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.55); font-weight: 700; }
+        .opt-preview.correct .opt-num { background: #10b981; color: #fff; }
+        .opt-badge { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #059669; }
     </style>
 </head>
 <body>
@@ -1612,7 +1621,10 @@
                 let subName = subjects.find(s=>s.id===q.subject)?.name || '';
                 let previewText = '';
                 if(q.type === 'mcq') {
-                    previewText = `1. ${q.option1 || ''}<br>2. ${q.option2 || ''}`;
+                    previewText = [1,2,3,4].filter(i => q[`option${i}`]).map(i => {
+                        const ok = String(q.correctAnswer) === String(i);
+                        return `<div class="opt-preview${ok ? ' correct' : ''}"><span class="opt-num">${i}</span><span class="opt-txt">${escapeHtml(q[`option${i}`])}</span>${ok ? '<span class="opt-badge"><i class="fas fa-check-circle"></i> الإجابة الصحيحة</span>' : ''}</div>`;
+                    }).join('');
                 } else {
                     previewText = `الإجابة: ${q.correctAnswer === 'true' ? 'صح' : 'خطأ'}`;
                 }
